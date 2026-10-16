@@ -1,0 +1,7 @@
+.git
+.github
+inyou-private
+*.zip
+*.bundle
+node_modules
+.vercel
