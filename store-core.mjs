@@ -25,7 +25,7 @@ export function normalizeCatalog(payload) {
     if (!AUDIENCES.includes(para)) throw new Error(`Público inválido: ${p.id}`);
     if (!FITS.includes(fit)) throw new Error(`Fit inválido: ${p.id}`);
     if (p.image && (typeof p.image !== 'string' || !/^assets\/[a-zA-Z0-9._/-]+\.(jpg|jpeg|png|webp)$/i.test(p.image) || p.image.includes('..'))) throw new Error(`Imagen inválida: ${p.id}`);
-    if (!Array.isArray(p.variants) || !p.variants.length) throw new Error(`Producto sin variantes: ${p.id}`);
+    if (!Array.isArray(p.variants)) throw new Error(`Variantes inválidas: ${p.id}`);
     const variants = p.variants.map(v => {
       if (!v || typeof v.sku !== 'string' || !/^[A-Z0-9-]{4,55}$/.test(v.sku) || seenSkus.has(v.sku)) throw new Error(`SKU inválido o duplicado: ${p.id}`);
       seenSkus.add(v.sku);
