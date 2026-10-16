@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once dirname(__DIR__, 2) . '/lib/database.php';
+
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, max-age=0');
 header('X-Content-Type-Options: nosniff');
@@ -13,44 +15,14 @@ if (!in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['GET', 'HEAD'], true)) {
 }
 
 try {
-    $path = dirname(__DIR__, 3) . '/inyou-private/db.php';
-
-    if (!is_file($path)) {
-        throw new RuntimeException('Private database configuration was not found.');
-    }
-
-    $config = require $path;
-
-    if (!is_array($config)) {
-        throw new RuntimeException('Invalid database configuration.');
-    }
-
-    foreach (['host', 'database', 'username', 'password'] as $key) {
-        if (!isset($config[$key]) || !is_string($config[$key]) || $config[$key] === '') {
-            throw new RuntimeException('Incomplete database configuration.');
-        }
-    }
-
-    $pdo = new PDO(
-        'mysql:host=' . $config['host'] .
-        ';dbname=' . $config['database'] .
-        ';charset=utf8mb4',
-        $config['username'],
-        $config['password'],
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false,
-            PDO::ATTR_TIMEOUT => 5,
-        ]
-    );
-
+    $pdo = inyouDb();
     $pdo->query('SELECT 1')->fetchColumn();
 
     if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'HEAD') {
         echo json_encode([
             'ok' => true,
             'database' => 'connected',
+            'runtime' => inyouRuntime(),
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 } catch (Throwable $e) {
@@ -61,6 +33,7 @@ try {
         echo json_encode([
             'ok' => false,
             'database' => 'unavailable',
+            'runtime' => inyouRuntime(),
         ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 }
