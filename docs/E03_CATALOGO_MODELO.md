@@ -1,137 +1,112 @@
 # E03 — Modelo definitivo del catálogo
 
-Estado: **DEFINIDO / PREPARADO PARA IMPLEMENTACIÓN**  
+Estado: **CERRADO EN CÓDIGO / PENDIENTE DE APLICACIÓN EN HOSTINGER**  
 Alcance: `products + product_variants + sizes + collections + product_collections + product_images`.
 
 ## Objetivo
 
 Definir un único modelo de catálogo para que el panel administrativo, la API pública y la tienda usen la misma fuente de verdad en MySQL.
 
-La tienda pública no debe depender de datos inventados ni de valores hardcodeados para colección, talle, imagen, disponibilidad o stock.
+La tienda pública no depende de valores hardcodeados para colección, talle, imagen, disponibilidad, stock o precio de variante.
 
-## Reglas de dominio
+## Modelo definitivo
 
 ### Productos (`products`)
 
-Un producto representa la ficha comercial principal.
+Campos utilizados por E03:
 
-Campos mínimos:
+- `id`
+- `sku`
+- `slug`
+- `name`
+- `description`
+- `base_price`
+- `currency` (`PYG`)
+- `status`: `draft`, `active`, `archived`
+- `featured`
+- `sort_order`
+- `product_type`: `remera`, `kepi`
+- `audience`: `Mujer`, `Hombre`, `Unisex`
+- `fit`: vacío, `Regular`, `Oversize`, `Cropped`, `Único`
+- `created_at`, `updated_at`
 
-- `id`: identificador interno.
-- `sku`: SKU base opcional del producto.
-- `slug`: URL única y estable.
-- `name`: nombre comercial.
-- `description`: descripción.
-- `base_price`: precio base en guaraníes.
-- `currency`: `PYG`.
-- `status`: `draft`, `active` o `archived`.
-- `featured`: destacado en catálogo.
-- `sort_order`: orden manual.
-- `product_type`: `remera` o `kepi`.
-- `audience`: `Mujer`, `Hombre` o `Unisex`.
-- `fit`: `Regular`, `Oversize`, `Cropped`, `Único` o vacío.
-- `created_at` / `updated_at`.
-
-Un producto `active` puede mostrarse en la tienda aunque temporalmente no tenga una variante comprable; en ese caso debe mostrarse como **No disponible**.
+Un producto activo sin variantes comprables puede mostrarse, pero queda como **No disponible**.
 
 ### Talles (`sizes`)
 
-Los talles son entidades reutilizables.
+Talles iniciales:
 
-Campos mínimos:
+- `S`
+- `M`
+- `L`
+- `XL`
+- `UNICO` → `Único`
 
-- `id`.
-- `code`: valor técnico único (`S`, `M`, `L`, `XL`, `UNICO`).
-- `label`: texto visible (`S`, `M`, `L`, `XL`, `Único`).
-- `sort_order`.
-- `is_active`.
-
-La API nunca debe mostrar `size_id` como si fuese el nombre del talle.
+La API resuelve el nombre real del talle mediante `size_id`; nunca expone el ID como texto visible.
 
 ### Variantes (`product_variants`)
 
-Una variante representa una combinación vendible de producto + talle + color.
+Campos usados:
 
-Campos mínimos:
+- `id`
+- `product_id`
+- `size_id`
+- `sku`
+- `color_name`
+- `price_override`
+- `stock_qty`
+- `availability_mode`: `stock`, `bajo_pedido`
+- `lead_time`
+- `is_active`
+- `sort_order`
 
-- `id`.
-- `product_id`.
-- `size_id` nullable para productos que no requieran talle.
-- `sku`: obligatorio y único.
-- `color_name`.
-- `price_override`: precio opcional específico.
-- `stock_qty`: stock físico.
-- `availability_mode`: `stock` o `bajo_pedido`.
-- `lead_time`: plazo visible para productos bajo pedido.
-- `is_active`.
-- `sort_order`.
-- `created_at` / `updated_at`.
+Reglas cerradas:
 
-Reglas:
-
-- `stock`: se puede agregar al carrito solo si `stock_qty > 0`.
-- `bajo_pedido`: puede agregarse aunque `stock_qty = 0`.
-- una variante inactiva nunca se expone públicamente.
-- `price_override` prevalece sobre `products.base_price` cuando exista.
+- `stock` requiere `stock_qty > 0` para agregarse al carrito.
+- `bajo_pedido` puede agregarse con stock cero.
+- variantes inactivas no se exponen.
+- `price_override`, cuando existe y es positivo, prevalece sobre `base_price`.
+- el carrito calcula subtotal con el precio real de la variante.
+- el mensaje de WhatsApp usa el precio real de la variante y muestra el plazo de bajo pedido.
 
 ### Colecciones (`collections`)
 
-Colecciones iniciales aprobadas por el frontend:
+Colecciones iniciales:
 
 1. `Floral & Arte`
 2. `Esenciales`
 3. `Fe & Esperanza`
 4. `Momentos Especiales`
 
-Campos mínimos:
+`product_collections` resuelve la relación N:M. La API utiliza la primera colección activa por orden como colección principal visible.
 
-- `id`.
-- `slug` único.
-- `name` único.
-- `description` opcional.
-- `is_active`.
-- `sort_order`.
-- `created_at` / `updated_at`.
-
-### Relación producto/colección (`product_collections`)
-
-Relación N:M entre productos y colecciones.
-
-Campos mínimos:
-
-- `product_id`.
-- `collection_id`.
-- `sort_order`.
-
-No se permite duplicar la misma relación producto/colección.
-
-En la V1 la API utiliza la primera colección activa por orden como colección principal visible en la tarjeta.
+Un producto activo sin colección activa no se publica en la respuesta de catálogo: se registra el problema en el log del servidor y se omite. Esto evita inventar una colección.
 
 ### Imágenes (`product_images`)
 
-Campos mínimos:
+Campos usados:
 
-- `id`.
-- `product_id`.
-- `file_path`: ruta relativa bajo `assets/products/`.
-- `alt_text`.
-- `is_primary`.
-- `sort_order`.
-- `created_at`.
+- `id`
+- `product_id`
+- `file_path`
+- `alt_text`
+- `is_primary`
+- `sort_order`
+- `created_at`
 
-Reglas:
+Reglas cerradas:
 
-- solo rutas relativas.
-- formatos permitidos al subir: JPG, PNG, WEBP.
-- ninguna imagen puede ejecutar PHP.
-- un producto debe tener como máximo una imagen primaria.
-- la API usa la primaria; si no existe, usa la primera por `sort_order`.
+- rutas exclusivamente relativas bajo `assets/products/`.
+- extensiones públicas admitidas: JPG, JPEG, PNG y WEBP.
+- se rechazan rutas con `..`.
+- la API ordena primero la imagen primaria y después por `sort_order`.
+- el frontend recibe `image` para compatibilidad y `images[]` para el modelo definitivo.
+- el texto alternativo se conserva para accesibilidad.
+- si una imagen falla al cargar, el frontend usa su ilustración de respaldo sin romper la tarjeta.
 
-## Contrato de salida de la API pública
+## Contrato definitivo de API
 
 `GET /api/v1/products.php`
-
-Cada producto debe devolver:
 
 ```json
 {
@@ -142,52 +117,105 @@ Cada producto debe devolver:
   "tipo": "remera",
   "para": "Unisex",
   "fit": "Regular",
-  "priceGs": 175000,
+  "priceGs": 150000,
   "image": "assets/products/remera-floral.webp",
+  "images": [
+    {
+      "src": "assets/products/remera-floral.webp",
+      "alt": "Remera floral frente"
+    }
+  ],
   "published": true,
   "variants": [
     {
-      "sku": "INY-FLO-S-BEI",
-      "size": "S",
+      "sku": "INY-FLO-M-BEI",
+      "size": "M",
       "color": "Beige",
-      "mode": "stock",
-      "stock": 3,
-      "leadTime": ""
+      "mode": "bajo_pedido",
+      "stock": 0,
+      "leadTime": "3 a 5 días",
+      "priceGs": 165000
     }
   ]
 }
 ```
 
-## Integridad obligatoria
+## Frontend cerrado en E03
 
-- claves foráneas para relaciones de catálogo.
-- SKU de variante único.
-- slug de producto único.
-- slug y nombre de colección únicos.
-- stock nunca negativo.
-- una relación producto/colección no puede duplicarse.
-- índices en las claves foráneas y campos utilizados por el catálogo público.
+`store-core.mjs` ahora contempla:
+
+- validación del catálogo;
+- validación segura de imágenes;
+- múltiples imágenes por producto;
+- precio por variante;
+- rango de precios;
+- stock físico;
+- bajo pedido;
+- limpieza del carrito contra el catálogo vigente;
+- límite de cantidad según stock;
+- subtotal por precio real de variante.
+
+`app.js` ahora contempla:
+
+- imagen principal y `alt` real;
+- precio desde / rango de precio;
+- actualización visual del precio al cambiar variante;
+- stock o plazo bajo pedido en el selector;
+- precio unitario y subtotal en carrito.
+
+## Pruebas versionadas
+
+Archivo: `tests/store.test.mjs`
+
+Cubre:
+
+1. normalización de imágenes;
+2. precio por variante;
+3. rango de precio;
+4. bloqueo de stock cero en modalidad stock;
+5. compra permitida en bajo pedido;
+6. límite de stock;
+7. subtotal con precio de variante;
+8. rechazo de rutas de imagen inseguras.
+
+Ejecutar en un entorno con Node.js:
+
+```bash
+node --test tests/store.test.mjs
+```
+
+## Migración
+
+Archivo: `database/migrations/001_catalog_model.sql`.
+
+La migración está versionada y **no se ejecuta automáticamente**. Antes de Hostinger se debe comparar contra el esquema real existente para evitar duplicar claves foráneas o columnas ya creadas.
 
 ## Fuera de E03
 
-E03 no incluye todavía:
+Queda deliberadamente para E04:
 
-- formulario visual del panel para variantes.
-- upload visual de imágenes.
-- gestión visual de colecciones.
-- pedidos o pagos.
-- despliegue en Hostinger.
+- formularios visuales para variantes;
+- gestión visual de stock;
+- carga y eliminación de imágenes;
+- selección visual de colección;
+- validación de publicación desde el panel;
+- gestión de talles/colecciones desde administración.
 
-Esos módulos se construyen sobre este contrato sin volver a cambiar el modelo base.
+Pedidos, pagos y despliegue tampoco forman parte de E03.
 
-## Definición de terminado de E03
+## Definición de terminado — resultado
 
-E03 queda terminado cuando:
+- [x] modelo documentado;
+- [x] migración SQL versionada;
+- [x] talles iniciales definidos;
+- [x] colecciones iniciales definidas;
+- [x] precio por variante implementado;
+- [x] lógica de stock y bajo pedido implementada;
+- [x] imágenes múltiples y ruta segura implementadas;
+- [x] API alineada con el frontend;
+- [x] pruebas de dominio versionadas;
+- [x] sin credenciales en repositorio;
+- [x] sin modificación automática de producción;
+- [ ] migración aplicada y verificada en Hostinger — reservado para etapa final de producción.
 
-1. el modelo está documentado;
-2. existe una migración SQL versionada;
-3. están definidas las colecciones iniciales;
-4. están definidos los talles iniciales;
-5. la migración no contiene credenciales ni datos privados;
-6. el contrato de API coincide con `store-core.mjs`;
-7. ningún archivo modifica automáticamente la base de producción.
+**E03 queda cerrado en GitHub.**
