@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once dirname(__DIR__) . '/lib/database.php';
+
 ini_set('display_errors','0');
 ini_set('log_errors','1');
 header('X-Content-Type-Options: nosniff');
@@ -9,7 +11,9 @@ header('Referrer-Policy: strict-origin-when-cross-origin');
 header('X-Frame-Options: DENY');
 header('Cache-Control: no-store, private');
 
-if(empty($_SERVER['HTTPS'])||$_SERVER['HTTPS']==='off'){
+$isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+$forwardedProto = strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? ''));
+if (!$isHttps && $forwardedProto !== 'https') {
     http_response_code(403);
     exit('Se requiere HTTPS.');
 }
@@ -31,26 +35,8 @@ if(session_status()===PHP_SESSION_NONE&&!session_start()){
 }
 
 function h(?string $s):string{return htmlspecialchars((string)$s,ENT_QUOTES|ENT_SUBSTITUTE,'UTF-8');}
-
-function db():PDO{
-    $path=dirname(__DIR__,2).'/inyou-private/db.php';
-    if(!is_file($path))throw new RuntimeException('Configuracion privada no disponible.');
-    $config=require $path;
-    if(!is_array($config)||!isset($config['host'],$config['database'],$config['username'],$config['password']))throw new RuntimeException('Configuracion de base de datos invalida.');
-    return new PDO(
-        'mysql:host='.$config['host'].';dbname='.$config['database'].';charset=utf8mb4',
-        $config['username'],$config['password'],[
-            PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE=>PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES=>false,
-        ]
-    );
-}
-
-function csrf():string{
-    if(empty($_SESSION['csrf']))$_SESSION['csrf']=bin2hex(random_bytes(32));
-    return $_SESSION['csrf'];
-}
+function db():PDO{return inyouDb();}
+function csrf():string{if(empty($_SESSION['csrf']))$_SESSION['csrf']=bin2hex(random_bytes(32));return $_SESSION['csrf'];}
 function validCsrf():bool{return isset($_POST['csrf'])&&is_string($_POST['csrf'])&&hash_equals(csrf(),$_POST['csrf']);}
 function requireAuth():void{if(empty($_SESSION['admin_id'])){header('Location: /admin/login.php');exit;}}
 function canManageCatalog():bool{return in_array((string)($_SESSION['admin_role']??''),['owner','admin','catalog'],true);}
