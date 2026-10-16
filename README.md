@@ -5,10 +5,11 @@ Ecommerce de InYou preparado para PHP + MySQL en Hostinger.
 ## Estado del proyecto
 
 - E01 — Tienda pública / experiencia base: completada.
-- E02 — Login, dashboard y CRUD inicial de productos: completada como base administrativa.
-- E03 — Modelo definitivo de catálogo: **cerrado en GitHub**.
-- E04 — Panel completo de catálogo: siguiente etapa.
-- Producción Hostinger: pendiente hasta cerrar el desarrollo.
+- E02 — Login, dashboard y CRUD inicial: completada como base administrativa.
+- E03 — Modelo definitivo de catálogo: **cerrado en código**.
+- E04 — Panel completo de catálogo: **cerrado en código**.
+- E05 — Pedidos y configuración comercial: siguiente etapa.
+- Producción Hostinger: pendiente hasta cerrar el desarrollo y validar migraciones.
 
 ## Estructura
 
@@ -17,19 +18,19 @@ admin/                  Panel administrativo
 api/v1/                 API pública
 database/migrations/    Migraciones SQL versionadas
 docs/                   Contratos y documentación
-assets/                  Recursos públicos
+assets/products/         Imágenes administradas del catálogo
 data/                    Configuración y catálogo demo
-tests/                   Pruebas de dominio
+tests/                   Pruebas de dominio y contratos
 app.js                   Interfaz de la tienda
 store-core.mjs           Reglas de catálogo y carrito
 index.html               Tienda pública
 ```
 
-## Catálogo E03
+## E03 — Catálogo
 
 Fuente de verdad prevista: MySQL.
 
-Entidades:
+Entidades principales:
 
 - `products`
 - `product_variants`
@@ -38,26 +39,35 @@ Entidades:
 - `product_collections`
 - `product_images`
 
-Incluye soporte para:
+Incluye variantes, stock, bajo pedido, plazo, precio por variante, múltiples imágenes, colecciones, tipo, público y fit.
 
-- variantes por talle y color;
-- stock físico;
-- modalidad bajo pedido;
-- plazo de preparación;
-- precio específico por variante;
-- múltiples imágenes con imagen principal;
+Contrato: `docs/E03_CATALOGO_MODELO.md`.
+
+## E04 — Panel de catálogo
+
+El panel permite administrar:
+
+- productos y estados;
 - colecciones;
-- tipo, público y fit del producto.
+- variantes por talle y color;
+- stock y bajo pedido;
+- precio específico por variante;
+- imágenes, imagen principal, alt y orden;
+- auditoría básica de cambios.
 
-Contrato completo: `docs/E03_CATALOGO_MODELO.md`.
+La publicación exige precio válido, colección activa, al menos una variante comprable y al menos una imagen.
 
-## Pruebas de dominio
+Contrato y checklist: `docs/E04_PANEL_CATALOGO.md`.
+
+## Pruebas
 
 Con Node.js disponible:
 
 ```bash
-node --test tests/store.test.mjs
+node --test tests/store.test.mjs tests/admin_contract.test.mjs
 ```
+
+Las pruebas están versionadas; la ejecución final forma parte del control previo al despliegue.
 
 ## Migraciones
 
@@ -67,8 +77,12 @@ Antes de aplicar cambios en Hostinger se debe comparar la migración con el esqu
 
 ## Seguridad
 
-Las credenciales de MySQL no pertenecen al repositorio. En producción se cargan desde `inyou-private/db.php`, fuera de `public_html`.
+- Las credenciales de MySQL no pertenecen al repositorio.
+- En producción se cargan desde `inyou-private/db.php`, fuera de `public_html`.
+- Las mutaciones administrativas requieren sesión, permiso y CSRF.
+- Los uploads aceptan JPG, PNG y WEBP por MIME real, con máximo 5 MB.
+- `assets/products/.htaccess` bloquea ejecución de scripts e indexado de directorio en servidores compatibles.
 
 ## Próxima etapa
 
-E04 implementará en `/admin` la administración completa de producto, variantes, inventario, colecciones e imágenes usando el contrato cerrado en E03.
+E05 debe implementar pedidos/consultas y configuración comercial sin habilitar producción hasta completar las pruebas y la integración final con Hostinger.
