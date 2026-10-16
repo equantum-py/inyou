@@ -38,7 +38,6 @@ function illustration(){const shirt=node('div','t-shirt');shirt.setAttribute('ro
 function setChip(groupSelector,attr,value){for(const btn of document.querySelectorAll(`${groupSelector} .chip`)){const active=btn.dataset[attr]===value;btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',String(active));}}
 function setType(value){activeType=value;setChip('#typeFilters','type',value);renderCatalog();}
 function setAudience(value){activeAudience=value;setChip('#audienceFilters','audience',value);renderCatalog();}
-// Mujer u Hombre también muestran los productos Unisex; "Unisex" muestra solo Unisex.
 function matchesAudience(product){if(activeAudience==='Todos')return true;if(activeAudience==='Unisex')return product.para==='Unisex';return product.para===activeAudience||product.para==='Unisex';}
 function matchesType(product){return activeType==='Todos'||product.tipo===activeType;}
 function matchesCollection(product){return activeFilter==='Todas'||product.collection===activeFilter;}
@@ -61,10 +60,18 @@ async function load(){
   qs('#year').textContent=new Date().getFullYear();
   if(demo){qs('#demoBanner').hidden=false;qs('#notice').textContent='VISTA DEMO · No es un catálogo real · Sin ventas habilitadas';}
   try{
-    const [configRes,catalogRes]=await Promise.all([fetch('./data/config.json',{cache:'no-store'}),fetch(demo?'./data/catalog.demo.json':'./data/catalog.json',{cache:'no-store'})]);
-    if(!configRes.ok||!catalogRes.ok)throw new Error('No fue posible leer los datos locales.');
-    config=await configRes.json();catalog=normalizeCatalog(await catalogRes.json());cart=cleanCart(readCart(),catalog);writeCart();
-  }catch(e){console.error('Error de catálogo:',e);toast('No se pudo cargar el catálogo. Abrí el sitio con un servidor local (ver README).');catalog=[];cart=[];}
+    const catalogUrl=demo?'./data/catalog.demo.json':'./api/v1/products.php';
+    const [configRes,catalogRes]=await Promise.all([
+      fetch('./data/config.json',{cache:'no-store'}),
+      fetch(catalogUrl,{cache:'no-store',headers:{'Accept':'application/json'}})
+    ]);
+    if(!configRes.ok)throw new Error('No fue posible leer la configuración de la tienda.');
+    if(!catalogRes.ok)throw new Error(`No fue posible cargar el catálogo (${catalogRes.status}).`);
+    config=await configRes.json();
+    catalog=normalizeCatalog(await catalogRes.json());
+    cart=cleanCart(readCart(),catalog);
+    writeCart();
+  }catch(e){console.error('Error de catálogo:',e);toast('No se pudo cargar el catálogo en este momento.');catalog=[];cart=[];}
   renderCatalog();renderCart();
 }
 qs('#openCart').addEventListener('click',openCart);qs('#closeCart').addEventListener('click',closeCart);qs('#backdrop').addEventListener('click',closeCart);qs('#checkout').addEventListener('click',handleCheckout);
