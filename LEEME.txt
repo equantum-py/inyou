@@ -1,0 +1,11 @@
+InYou E02 — Login y dashboard (entrega inicial, sin ventas)
+
+1. Subir la carpeta admin/ a public_html/admin/ en Hostinger. No sobrescribir la tienda.
+2. La aplicación espera el archivo privado db.php fuera de public_html, en la carpeta inyou-private del directorio padre de public_html. Si la estructura de tu hosting es diferente, ajustar SOLO la ruta en admin/bootstrap.php. Nunca colocar db.php dentro de public_html.
+3. IMPORTANTE: el usuario MySQL actual inyou_read con SELECT es suficiente para login y dashboard de solo lectura. No usar ese usuario para CRUD.
+4. Crear el primer administrador mediante un procedimiento seguro con password_hash de PHP y un usuario autorizado de base de datos. No hay cuenta ni contraseña por defecto. No poner una contraseña sin hash en SQL. La tabla admin_users debe tener al menos email, display_name, password_hash, role='owner', is_active=1.
+5. Abrir https://TU-DOMINIO/admin/login.php. El servidor debe tener HTTPS activo.
+6. El bloqueo de intentos en esta entrega es por sesión, NO sustituye el límite global por IP/cuenta requerido antes de producción.
+7. El dashboard muestra conteos reales. 'Pedidos registrados' no significa pedidos habilitados.
+8. Esta entrega NO incluye alta/edición de productos, carga de imágenes, recuperación de contraseña, administración de usuarios ni habilitación de pedidos.
+9. Probar login válido/inválido, cierre de sesión, acceso anónimo al dashboard, HTTPS y diseño móvil antes de aprobar E02.

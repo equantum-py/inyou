@@ -1,0 +1,52 @@
+[
+  {
+    "id": "demo-floral",
+    "name": "Ejemplo floral",
+    "description": "Artículo exclusivamente de prueba. Sin fotografía, precio ni disponibilidad comercial confirmados.",
+    "collection": "Floral & Arte",
+    "priceGs": 75000,
+    "image": "",
+    "published": true,
+    "variants": [
+      {"sku":"DEMO-FLOR-M-BEI","size":"M","color":"Beige","mode":"stock","stock":3,"leadTime":""},
+      {"sku":"DEMO-FLOR-L-BEI","size":"L","color":"Beige","mode":"stock","stock":2,"leadTime":""}
+    ]
+  },
+  {
+    "id":"demo-esencial",
+    "name":"Ejemplo esencial",
+    "description":"Producto ficticio utilizado para probar el carrito. No es oferta comercial.",
+    "collection":"Esenciales",
+    "priceGs":80000,
+    "image":"",
+    "published":true,
+    "variants":[
+      {"sku":"DEMO-ESEN-S-NEG","size":"S","color":"Negro","mode":"stock","stock":1,"leadTime":""},
+      {"sku":"DEMO-ESEN-M-NEG","size":"M","color":"Negro","mode":"bajo_pedido","stock":0,"leadTime":"A confirmar antes de cotizar"}
+    ]
+  },
+  {
+    "id":"demo-fe",
+    "name":"Ejemplo mensaje",
+    "description":"Datos de demostración. El diseño final y sus derechos deben verificarse.",
+    "collection":"Fe & Esperanza",
+    "priceGs":90000,
+    "image":"",
+    "published":true,
+    "variants":[
+      {"sku":"DEMO-FE-L-MEN","size":"L","color":"Menta","mode":"stock","stock":2,"leadTime":""}
+    ]
+  },
+  {
+    "id":"demo-momento",
+    "name":"Ejemplo ocasión",
+    "description":"Artículo ficticio: no reservar, producir ni cobrar con esta información.",
+    "collection":"Momentos Especiales",
+    "priceGs":85000,
+    "image":"",
+    "published":true,
+    "variants":[
+      {"sku":"DEMO-MOM-XL-BLA","size":"XL","color":"Blanco","mode":"bajo_pedido","stock":0,"leadTime":"A confirmar antes de cotizar"}
+    ]
+  }
+]
