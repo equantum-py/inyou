@@ -4,15 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#f7f4ee" />
-  <meta name="description" content="IN YOU — Moda con intención. Descubrí prendas, colecciones y novedades." />
+  <meta name="description" content="IN YOU — Moda con intención. Descubrí prendas, colecciones y destacados." />
   <title>IN YOU · Tienda</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="e05-mobile.css" />
+  <link rel="stylesheet" href="e05-catalog.css" />
   <script type="module" src="app.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#novedades">Saltar al catálogo</a>
+  <a class="skip-link" href="#destacados">Saltar al catálogo</a>
   <div class="notice" id="notice">EN PREPARACIÓN · Sitio todavía no habilitado para ventas</div>
 
   <header class="site-header">
@@ -20,7 +21,7 @@
       <button class="menu-button" type="button" id="openMenu" aria-label="Abrir menú">☰</button>
       <a class="wordmark" href="#inicio" aria-label="IN YOU, ir al inicio"><span>in</span>You<span class="mint-dot">.</span></a>
       <nav class="desktop-nav" aria-label="Navegación principal">
-        <a href="#novedades">Novedades</a><a href="#novedades" data-audience-link="Mujer">Mujer</a><a href="#novedades" data-audience-link="Hombre">Hombre</a><a href="#novedades" data-audience-link="Unisex">Unisex</a><a href="#colecciones">Colecciones</a>
+        <a href="#destacados">Destacados</a><a href="#destacados" data-audience-link="Mujer">Mujer</a><a href="#destacados" data-audience-link="Hombre">Hombre</a><a href="#destacados" data-audience-link="Unisex">Unisex</a><a href="#colecciones">Colecciones</a>
       </nav>
       <div class="header-actions">
         <button class="icon-action" type="button" id="openSearch" aria-label="Buscar">⌕</button>
@@ -33,7 +34,7 @@
     </div>
     <div class="category-strip" aria-label="Accesos rápidos">
       <div class="container category-strip-inner">
-        <button class="category-pill active" type="button" data-quick="Todos">Novedades</button>
+        <button class="category-pill active" type="button" data-quick="Todos">Destacados</button>
         <button class="category-pill" type="button" data-type-quick="remera">Remeras</button>
         <button class="category-pill" type="button" data-audience-quick="Mujer">Mujer</button>
         <button class="category-pill" type="button" data-audience-quick="Hombre">Hombre</button>
@@ -48,10 +49,10 @@
     <section class="hero" id="inicio">
       <div class="hero-media">
         <div class="container hero-content">
-          <span class="hero-label">NUEVA TEMPORADA</span>
+          <span class="hero-label">SELECCIÓN IN YOU</span>
           <h1>Prendas que hablan<br>por vos.</h1>
           <p>Diseños con intención, para usar todos los días.</p>
-          <div class="hero-actions"><a class="btn-dark" href="#novedades">Ver novedades</a><a class="btn-light" href="#colecciones">Colecciones</a></div>
+          <div class="hero-actions"><a class="btn-dark" href="#destacados">Ver destacados</a><a class="btn-light" href="#colecciones">Colecciones</a></div>
         </div>
       </div>
     </section>
@@ -63,10 +64,39 @@
       <button type="button" data-type-quick="kepi"><span class="shortcut-image shortcut-cap"></span><strong>Kepis</strong></button>
     </section>
 
-    <section class="fashion-section container" id="novedades">
-      <div class="section-heading"><div><span class="section-kicker">RECIÉN LLEGADOS</span><h2>Novedades</h2></div><button class="text-link" type="button" data-quick="Todos">Ver todo →</button></div>
+    <section class="benefit-strip" aria-label="Beneficios de compra">
+      <div class="container benefit-grid">
+        <div><span class="benefit-icon">◌</span><p><strong>100% algodón</strong><small>Comodidad para todos los días</small></p></div>
+        <div><span class="benefit-icon">⌂</span><p><strong>Delivery disponible</strong><small>Coordinamos tu entrega</small></p></div>
+        <div><span class="benefit-icon">◐</span><p><strong>Colores y talles</strong><small>Elegí tu variante antes de comprar</small></p></div>
+        <button class="benefit-whatsapp" type="button" id="benefitWhatsApp"><span class="wa-small">◔</span><p><strong>Atención por WhatsApp</strong><small>Consultanos directamente</small></p></button>
+      </div>
+    </section>
+
+    <section class="fashion-section container" id="destacados">
+      <div class="section-heading"><div><span class="section-kicker">SELECCIÓN IN YOU</span><h2>Destacados</h2></div><button class="text-link" type="button" data-quick="Todos">Ver todo →</button></div>
+
+      <div class="catalog-filter-bar" aria-label="Filtros de catálogo">
+        <div class="filter-group filter-categories">
+          <span class="filter-label">Categoría</span>
+          <button class="catalog-filter active" type="button" data-type-filter="Todos">Todo</button>
+          <button class="catalog-filter" type="button" data-type-filter="remera">Remeras</button>
+          <button class="catalog-filter" type="button" data-type-filter="kepi">Kepis</button>
+        </div>
+        <div class="filter-group">
+          <label class="filter-select-label">Talle
+            <select id="sizeFilter"><option value="Todos">Todos</option></select>
+          </label>
+          <label class="filter-select-label">Color
+            <select id="colorFilter"><option value="Todos">Todos</option></select>
+          </label>
+          <button class="clear-filters" id="clearCatalogFilters" type="button">Limpiar</button>
+        </div>
+      </div>
+      <div class="active-filter-summary" id="activeFilterSummary">Mostrando todos los productos destacados.</div>
+
       <div class="product-grid featured-grid" id="productGrid"></div>
-      <div class="catalog-empty" id="catalogEmpty" hidden><h3>Estamos preparando esta selección.</h3><p>Los productos aparecerán acá cuando estén listos.</p></div>
+      <div class="catalog-empty" id="catalogEmpty" hidden><h3>No encontramos prendas con esos filtros.</h3><p>Probá cambiar talle, color o categoría.</p></div>
     </section>
 
     <section class="collections-section" id="colecciones">
@@ -84,7 +114,7 @@
     <section class="season-section container">
       <article class="season-card">
         <div class="season-photo" aria-hidden="true"></div>
-        <div class="season-copy"><span class="section-kicker">TEMPORADA</span><h2>Primavera / Verano</h2><p>Colores suaves, básicos y diseños livianos para todos los días.</p><button class="text-link inverse" type="button" data-quick="Todos">Explorar temporada →</button></div>
+        <div class="season-copy"><span class="section-kicker">TEMPORADA</span><h2>Primavera / Verano</h2><p>Colores suaves, básicos y diseños livianos para todos los días.</p><button class="text-link inverse" type="button" data-quick="Todos">Explorar selección →</button></div>
       </article>
     </section>
 
@@ -101,7 +131,11 @@
     </section>
   </main>
 
-  <footer class="footer"><div class="container footer-grid"><div><div class="wordmark"><span>in</span>You<span class="mint-dot">.</span></div><p>Diseños con sentido, desde Paraguay.</p></div><div class="footer-links"><a href="#novedades">Novedades</a><a href="#colecciones">Colecciones</a><a href="talles.html">Guía de talles</a><a href="politicas.html">Políticas</a></div><div class="footer-legal">© IN YOU <span id="year"></span></div></div></footer>
+  <footer class="footer"><div class="container footer-grid"><div><div class="wordmark"><span>in</span>You<span class="mint-dot">.</span></div><p>Diseños con sentido, desde Paraguay.</p></div><div class="footer-links"><a href="#destacados">Destacados</a><a href="#colecciones">Colecciones</a><a href="talles.html">Guía de talles</a><a href="politicas.html">Políticas</a></div><div class="footer-legal">© IN YOU <span id="year"></span></div></div></footer>
+
+  <button class="whatsapp-float" type="button" id="whatsappFloat" aria-label="Consultar por WhatsApp">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3a12.5 12.5 0 0 0-10.7 19L3.8 28l6.1-1.5A12.5 12.5 0 1 0 16 3Zm0 22.5c-2 0-3.8-.6-5.4-1.6l-.8-.5-3.6.9.9-3.5-.5-.8A10 10 0 1 1 16 25.5Zm5.6-7.5c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-1.8-.9-3-2.3-3.9-4-.3-.6.3-.6.9-1.5.1-.2.1-.4 0-.6l-.9-2.2c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.9 0 1.7 1.2 3.3 1.4 3.5.2.2 2.4 3.7 5.9 5.1 3 .9 3.6.8 4.2.7.7-.1 2.1-.9 2.4-1.7.3-.8.3-1.5.2-1.7-.1-.2-.3-.3-.6-.4Z"/></svg>
+  </button>
 
   <nav class="mobile-bottom-nav" aria-label="Navegación móvil">
     <a href="#inicio"><span>⌂</span><small>Inicio</small></a>
@@ -110,7 +144,7 @@
     <button type="button" id="openCartBottom"><span>🛍</span><small>Carrito</small></button>
   </nav>
 
-  <div class="mobile-menu" id="mobileMenu" hidden><div class="mobile-menu-head"><strong>inYou.</strong><button id="closeMenu" aria-label="Cerrar">×</button></div><nav><a href="#inicio">Inicio</a><a href="#novedades">Novedades</a><a href="#novedades" data-audience-link="Mujer">Mujer</a><a href="#novedades" data-audience-link="Hombre">Hombre</a><a href="#novedades" data-audience-link="Unisex">Unisex</a><a href="#colecciones">Colecciones</a><a href="talles.html">Guía de talles</a></nav></div>
+  <div class="mobile-menu" id="mobileMenu" hidden><div class="mobile-menu-head"><strong>inYou.</strong><button id="closeMenu" aria-label="Cerrar">×</button></div><nav><a href="#inicio">Inicio</a><a href="#destacados">Destacados</a><a href="#destacados" data-audience-link="Mujer">Mujer</a><a href="#destacados" data-audience-link="Hombre">Hombre</a><a href="#destacados" data-audience-link="Unisex">Unisex</a><a href="#colecciones">Colecciones</a><a href="talles.html">Guía de talles</a></nav></div>
 
   <div class="search-panel" id="searchPanel" hidden><div class="search-shell"><div class="search-top"><input id="smartSearch" type="search" placeholder="Buscar remeras, colores, colecciones..." autocomplete="off"><button id="closeSearch">×</button></div><div id="searchSuggestions" class="search-suggestions"><p>Probá buscar “remera”, “floral”, “mujer” o “kepi”.</p></div></div></div>
 
@@ -119,6 +153,6 @@
   <div id="demoBanner" class="demo-banner" hidden>DEMOSTRACIÓN: productos, precios y stock ficticios.</div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div class="drawer-backdrop" id="backdrop" hidden></div>
-  <aside class="drawer" id="cartDrawer" aria-modal="true" aria-hidden="true" role="dialog" aria-label="Carrito" tabindex="-1" inert><div class="drawer-heading"><div><span class="section-kicker">TU SELECCIÓN</span><h2>Mi carrito</h2></div><button id="closeCart" class="icon-button">×</button></div><div id="cartItems" class="cart-items"></div><div class="drawer-footer"><div class="subtotal"><span>Subtotal estimado</span><strong id="cartSubtotal">G. 0</strong></div><p>El envío y pago se confirman por WhatsApp.</p><button class="checkout" id="checkout" disabled>Consultar por WhatsApp ↗</button><p id="checkoutReason"></p></div></aside>
+  <aside class="drawer" id="cartDrawer" aria-modal="true" aria-hidden="true" role="dialog" aria-label="Carrito" tabindex="-1" inert><div class="drawer-heading"><div><span class="section-kicker">TU SELECCIÓN</span><h2>Mi carrito</h2></div><button id="closeCart" class="icon-button">×</button></div><div id="cartItems" class="cart-items"></div><div class="drawer-footer"><div class="subtotal"><span>Subtotal estimado</span><strong id="cartSubtotal">G. 0</strong></div><p>Delivery disponible. El envío y pago se confirman por WhatsApp.</p><button class="checkout" id="checkout" disabled>Consultar por WhatsApp ↗</button><p id="checkoutReason"></p></div></aside>
 </body>
 </html>
