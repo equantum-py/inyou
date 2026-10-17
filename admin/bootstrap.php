@@ -18,16 +18,73 @@ if (!$isHttps && $forwardedProto !== 'https') {
     exit('Se requiere HTTPS.');
 }
 
+final class InYouDbSessionHandler implements SessionHandlerInterface
+{
+    public function __construct(private PDO $pdo)
+    {
+        $this->pdo->exec("CREATE TABLE IF NOT EXISTS admin_sessions (
+            id VARCHAR(128) NOT NULL,
+            payload MEDIUMTEXT NOT NULL,
+            expires_at TIMESTAMP NOT NULL,
+            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY idx_admin_sessions_expires (expires_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    }
+
+    public function open(string $path,string $name):bool{return true;}
+    public function close():bool{return true;}
+
+    public function read(string $id):string|false
+    {
+        $q=$this->pdo->prepare('SELECT payload FROM admin_sessions WHERE id=? AND expires_at>CURRENT_TIMESTAMP LIMIT 1');
+        $q->execute([$id]);
+        $row=$q->fetch();
+        return $row ? (string)$row['payload'] : '';
+    }
+
+    public function write(string $id,string $data):bool
+    {
+        $ttl=max(1800,(int)ini_get('session.gc_maxlifetime'));
+        $q=$this->pdo->prepare('INSERT INTO admin_sessions (id,payload,expires_at) VALUES (?,?,DATE_ADD(CURRENT_TIMESTAMP,INTERVAL ? SECOND)) ON DUPLICATE KEY UPDATE payload=VALUES(payload),expires_at=VALUES(expires_at),updated_at=CURRENT_TIMESTAMP');
+        return $q->execute([$id,$data,$ttl]);
+    }
+
+    public function destroy(string $id):bool
+    {
+        $q=$this->pdo->prepare('DELETE FROM admin_sessions WHERE id=?');
+        return $q->execute([$id]);
+    }
+
+    public function gc(int $max_lifetime):int|false
+    {
+        $q=$this->pdo->prepare('DELETE FROM admin_sessions WHERE expires_at<=CURRENT_TIMESTAMP');
+        $q->execute();
+        return $q->rowCount();
+    }
+}
+
 ini_set('session.use_strict_mode','1');
 ini_set('session.use_only_cookies','1');
+ini_set('session.gc_maxlifetime','43200');
 session_name('inyou_admin');
 session_set_cookie_params([
     'lifetime'=>0,
     'path'=>'/admin',
     'secure'=>true,
     'httponly'=>true,
-    'samesite'=>'Strict',
+    'samesite'=>'Lax',
 ]);
+
+try {
+    $sessionPdo=inyouDb();
+    session_set_save_handler(new InYouDbSessionHandler($sessionPdo),true);
+} catch (Throwable $e) {
+    error_log('InYou session storage: '.$e->getMessage());
+    http_response_code(503);
+    exit('Servicio temporalmente no disponible.');
+}
+
 if(session_status()===PHP_SESSION_NONE&&!session_start()){
     error_log('InYou: No se pudo iniciar la sesion');
     http_response_code(503);
