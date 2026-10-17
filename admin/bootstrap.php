@@ -39,7 +39,10 @@ function db():PDO{return inyouDb();}
 function csrf():string{if(empty($_SESSION['csrf']))$_SESSION['csrf']=bin2hex(random_bytes(32));return $_SESSION['csrf'];}
 function validCsrf():bool{return isset($_POST['csrf'])&&is_string($_POST['csrf'])&&hash_equals(csrf(),$_POST['csrf']);}
 function requireAuth():void{if(empty($_SESSION['admin_id'])){header('Location: /admin/login.php');exit;}}
-function canManageCatalog():bool{return in_array((string)($_SESSION['admin_role']??''),['owner','admin','catalog'],true);}
+function role():string{return (string)($_SESSION['admin_role']??'');}
+function canManageCatalog():bool{return in_array(role(),['owner','admin','catalog'],true);}
+function canManageUsers():bool{return role()==='owner';}
+function canViewAudit():bool{return in_array(role(),['owner','admin'],true);}
 
 function auditLog(PDO $pdo,string $action,string $entityType,?int $entityId=null):void{
     try{
@@ -49,4 +52,18 @@ function auditLog(PDO $pdo,string $action,string $entityType,?int $entityId=null
         $q=$pdo->prepare('INSERT INTO admin_audit_log (action,entity_type,created_at) VALUES (?,?,CURRENT_TIMESTAMP)');
         $q->execute([$label,mb_substr($entityType,0,80)]);
     }catch(Throwable $e){error_log('InYou audit log: '.$e->getMessage());}
+}
+
+function adminSidebar(string $active=''):void{
+    $items=[
+        'home'=>['/admin/','Resumen'],
+        'products'=>['/admin/products.php','Productos'],
+        'collections'=>['/admin/collections.php','Colecciones'],
+        'inventory'=>['/admin/inventory.php','Inventario'],
+    ];
+    if(canViewAudit())$items['audit']=['/admin/audit.php','Auditoría'];
+    if(canManageUsers())$items['users']=['/admin/users.php','Usuarios'];
+    echo '<aside class="sidebar"><div class="brand">in<span>You</span><i>.</i></div><div class="eyebrow">PANEL ADMINISTRATIVO</div><nav>';
+    foreach($items as $key=>$item){$cls=$key===$active?' class="selected"':'';echo '<a'.$cls.' href="'.h($item[0]).'">'.h($item[1]).'</a>';}
+    echo '</nav><div class="sidebar-bottom">InYou · Administración<br><small>'.h(role()).'</small></div></aside>';
 }
