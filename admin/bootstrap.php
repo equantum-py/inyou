@@ -117,18 +117,43 @@ function auditLog(PDO $pdo,string $action,string $entityType,?int $entityId=null
     }catch(Throwable $e){error_log('InYou audit log: '.$e->getMessage());}
 }
 
-function adminSidebar(string $active=''):void{
+function adminMenuItems():array{
     $items=[
-        'home'=>['/admin/','Resumen'],
-        'products'=>['/admin/products.php','Productos'],
-        'collections'=>['/admin/collections.php','Colecciones'],
-        'inventory'=>['/admin/inventory.php','Inventario'],
-        'media'=>['/admin/media.php','Medios'],
+        ['href'=>'/admin/','label'=>'Resumen'],
+        ['href'=>'/admin/products.php','label'=>'Productos'],
+        ['href'=>'/admin/collections.php','label'=>'Colecciones'],
+        ['href'=>'/admin/inventory.php','label'=>'Inventario'],
+        ['href'=>'/admin/media.php','label'=>'Medios'],
     ];
-    if(canManageSettings())$items['settings']=['/admin/settings.php','Configuración'];
-    if(canViewAudit())$items['audit']=['/admin/audit.php','Actividad'];
-    if(canManageUsers())$items['users']=['/admin/users.php','Usuarios'];
+    if(canManageSettings())$items[]=['href'=>'/admin/settings.php','label'=>'Configuración'];
+    if(canViewAudit())$items[]=['href'=>'/admin/audit.php','label'=>'Actividad'];
+    if(canManageUsers())$items[]=['href'=>'/admin/users.php','label'=>'Usuarios'];
+    return $items;
+}
+
+function adminSidebar(string $active=''):void{
     echo '<aside class="sidebar"><div class="brand">in<span>You</span><i>.</i></div><div class="eyebrow">PANEL ADMINISTRATIVO</div><nav>';
-    foreach($items as $key=>$item){$cls=$key===$active?' class="selected"':'';echo '<a'.$cls.' href="'.h($item[0]).'">'.h($item[1]).'</a>';}
+    foreach(adminMenuItems() as $item){
+        $isActive=false;
+        if($active==='home'&&$item['href']==='/admin/')$isActive=true;
+        if($active==='products'&&$item['href']==='/admin/products.php')$isActive=true;
+        if($active==='collections'&&$item['href']==='/admin/collections.php')$isActive=true;
+        if($active==='inventory'&&$item['href']==='/admin/inventory.php')$isActive=true;
+        if($active==='media'&&$item['href']==='/admin/media.php')$isActive=true;
+        if($active==='settings'&&$item['href']==='/admin/settings.php')$isActive=true;
+        if($active==='audit'&&$item['href']==='/admin/audit.php')$isActive=true;
+        if($active==='users'&&$item['href']==='/admin/users.php')$isActive=true;
+        echo '<a'.($isActive?' class="selected"':'').' href="'.h($item['href']).'">'.h($item['label']).'</a>';
+    }
     echo '</nav><div class="sidebar-bottom">InYou · Administración<br><small>'.h(role()).'</small></div></aside>';
+}
+
+/* Algunas pantallas antiguas todavía traen un menú lateral reducido en su HTML.
+   Este normalizador garantiza el mismo menú completo en todas las secciones sin
+   depender de que cada pantalla mantenga su propia copia de navegación. */
+if(!empty($_SESSION['admin_id'])){
+    $menuJson=json_encode(adminMenuItems(),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+    register_shutdown_function(static function() use ($menuJson):void{
+        echo '<script>(function(){const nav=document.querySelector(".sidebar nav");if(!nav)return;const items='.$menuJson.';const path=location.pathname.replace(/\/$/,"")||"/admin";nav.replaceChildren();for(const item of items){const a=document.createElement("a");a.href=item.href;a.textContent=item.label;const target=item.href.replace(/\/$/,"")||"/admin";let active=path===target;if((path==="/admin/variants.php"||path==="/admin/images.php")&&target==="/admin/products.php")active=true;if(active)a.className="selected";nav.appendChild(a);}})();</script>';
+    });
 }
