@@ -1,0 +1,42 @@
+.mobile-search-row{display:none}.text-link{border:0;background:transparent;padding:0;font-size:12px;text-decoration:underline;text-underline-offset:4px}.text-link.inverse{color:#fff}.mobile-bottom-nav{display:none}.season-photo{background-image:var(--woman2);background-size:cover;background-position:center}.brand-copy{min-width:0}
+
+@media(max-width:900px){
+  body{padding-bottom:72px}
+  .notice{font-size:8px;padding:6px 8px;letter-spacing:.1em}
+  .site-header{position:sticky;top:0}
+  .header-inner{height:58px}
+  .header-actions{gap:1px}
+  .icon-action{min-width:34px;height:34px;font-size:18px}
+  .favorites-header{display:none}
+  .mobile-search-row{display:block;padding-bottom:8px}
+  .mobile-search-launcher{width:100%;height:42px;border:1px solid #ddd8ce;background:#fff;border-radius:999px;display:flex;align-items:center;gap:10px;padding:0 14px;color:#777;text-align:left;font-size:12px}
+  .mobile-search-launcher span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .category-strip-inner{padding:7px 0 9px}.category-pill{padding:8px 12px;font-size:11px}
+  .hero-media{min-height:500px;background-position:center 25%}.hero-content{padding-bottom:36px}.hero-content h1{font-size:48px;line-height:.96;max-width:310px}.hero-content p{font-size:13px;max-width:260px}.hero-actions{gap:8px}.btn-dark,.btn-light{padding:12px 14px;font-size:11px}
+  .shop-shortcuts{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding-top:18px;padding-bottom:48px;margin:0}.shop-shortcuts strong{font-size:11px}.shortcut-image{margin-bottom:7px}
+  .fashion-section{padding-bottom:56px}.section-heading{margin-bottom:18px}.section-heading h2{font-size:34px}.section-kicker{font-size:8px}
+  .product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.product-title{font-size:13px}.product-meta{display:none}.product-facts{font-size:9px}.product-price{font-size:14px}.product-tag{font-size:7px;padding:5px 6px}.favorite-btn{width:32px;height:32px;font-size:17px;right:8px;top:8px}
+  .collections-section{padding:58px 0}.collection-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding-bottom:6px;scrollbar-width:none}.collection-grid::-webkit-scrollbar{display:none}.collection-card{min-width:78%;min-height:330px;scroll-snap-align:start}.collection-card strong{font-size:25px}
+  .season-section{padding:56px 0}.season-card{display:flex;flex-direction:column;min-height:0}.season-photo{min-height:360px;order:1}.season-copy{order:2;padding:28px}.season-copy h2{font-size:38px;line-height:1}.season-copy p{font-size:13px}
+  .looks-section{padding-bottom:56px}.looks-grid{grid-template-columns:1fr;gap:28px}.look{aspect-ratio:4/5}.looks-grid h3{font-size:14px}
+  .brand-block{padding:56px 0}.brand-grid{grid-template-columns:1fr;gap:28px}.brand-grid h2{font-size:38px}.brand-grid p{font-size:13px}.brand-visual{min-height:220px}.brand-visual span{font-size:48px}
+  .footer{padding:36px 0 28px}.footer-grid{flex-direction:column;gap:18px}.footer-links{flex-wrap:wrap;gap:14px}.footer-legal{text-align:left}
+  .mobile-bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:75;height:64px;background:rgba(255,253,249,.97);border-top:1px solid #ddd8ce;display:grid;grid-template-columns:repeat(4,1fr);backdrop-filter:blur(14px)}
+  .mobile-bottom-nav a,.mobile-bottom-nav button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:18px;color:#1c1d1a}.mobile-bottom-nav small{font-size:9px}.mobile-bottom-nav button{font-family:inherit}
+  .search-panel,.favorites-panel,.mobile-menu{z-index:100}.search-shell{margin:0;border:0;min-height:100vh}.search-top{padding:14px}.search-top input{font-size:16px}.search-suggestions{padding:12px 16px}.search-result{grid-template-columns:48px 1fr auto}.search-result img{width:48px;height:58px}
+  .favorites-shell{width:100%}.favorite-items{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media(max-width:430px){
+  .container{width:calc(100% - 28px)}
+  .wordmark{font-size:24px}
+  .menu-button{font-size:20px}
+  .hero-media{min-height:455px}.hero-content h1{font-size:43px}.hero-label{font-size:8px}.hero-content{padding-bottom:28px}
+  .shop-shortcuts{gap:8px}.shop-shortcuts strong{font-size:10px}
+  .section-heading h2{font-size:31px}
+  .product-grid{gap:10px}.product-image{aspect-ratio:3/4}.product-title{margin-top:9px}
+  .collection-card{min-width:84%;min-height:300px}
+  .season-photo{min-height:320px}.season-copy{padding:24px}.season-copy h2{font-size:34px}
+  .look{aspect-ratio:3/4}
+  .brand-grid h2{font-size:34px}
+}
