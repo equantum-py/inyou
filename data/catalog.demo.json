@@ -4,6 +4,9 @@
     "name": "Ejemplo floral",
     "description": "Artículo exclusivamente de prueba. Sin fotografía, precio ni disponibilidad comercial confirmados.",
     "collection": "Floral & Arte",
+    "tipo": "remera",
+    "para": "Mujer",
+    "fit": "Regular",
     "priceGs": 75000,
     "image": "",
     "published": true,
@@ -17,6 +20,9 @@
     "name":"Ejemplo esencial",
     "description":"Producto ficticio utilizado para probar el carrito. No es oferta comercial.",
     "collection":"Esenciales",
+    "tipo":"remera",
+    "para":"Unisex",
+    "fit":"Regular",
     "priceGs":80000,
     "image":"",
     "published":true,
@@ -30,6 +36,9 @@
     "name":"Ejemplo mensaje",
     "description":"Datos de demostración. El diseño final y sus derechos deben verificarse.",
     "collection":"Fe & Esperanza",
+    "tipo":"remera",
+    "para":"Unisex",
+    "fit":"Oversize",
     "priceGs":90000,
     "image":"",
     "published":true,
@@ -42,11 +51,112 @@
     "name":"Ejemplo ocasión",
     "description":"Artículo ficticio: no reservar, producir ni cobrar con esta información.",
     "collection":"Momentos Especiales",
+    "tipo":"remera",
+    "para":"Mujer",
+    "fit":"Cropped",
     "priceGs":85000,
     "image":"",
     "published":true,
     "variants":[
       {"sku":"DEMO-MOM-XL-BLA","size":"XL","color":"Blanco","mode":"bajo_pedido","stock":0,"leadTime":"A confirmar antes de cotizar"}
+    ]
+  },
+  {
+    "id":"demo-classic-blanca",
+    "name":"Remera Classic Blanca",
+    "description":"Demo visual de una remera básica 100% algodón con variantes por talle y color.",
+    "collection":"Esenciales",
+    "tipo":"remera",
+    "para":"Unisex",
+    "fit":"Regular",
+    "priceGs":120000,
+    "image":"",
+    "published":true,
+    "variants":[
+      {"sku":"DEMO-CLAS-S-BLA","size":"S","color":"Blanco","mode":"stock","stock":4,"leadTime":""},
+      {"sku":"DEMO-CLAS-M-BLA","size":"M","color":"Blanco","mode":"stock","stock":5,"leadTime":""},
+      {"sku":"DEMO-CLAS-L-BLA","size":"L","color":"Blanco","mode":"stock","stock":3,"leadTime":""},
+      {"sku":"DEMO-CLAS-S-NEG","size":"S","color":"Negro","mode":"stock","stock":2,"leadTime":""},
+      {"sku":"DEMO-CLAS-M-NEG","size":"M","color":"Negro","mode":"stock","stock":4,"leadTime":""},
+      {"sku":"DEMO-CLAS-L-NEG","size":"L","color":"Negro","mode":"stock","stock":2,"leadTime":""}
+    ]
+  },
+  {
+    "id":"demo-oversize-negra",
+    "name":"Remera Oversize Negra",
+    "description":"Demo de remera oversize 100% algodón con selección independiente de talle y color.",
+    "collection":"Esenciales",
+    "tipo":"remera",
+    "para":"Hombre",
+    "fit":"Oversize",
+    "priceGs":145000,
+    "image":"",
+    "published":true,
+    "variants":[
+      {"sku":"DEMO-OVER-M-NEG","size":"M","color":"Negro","mode":"stock","stock":4,"leadTime":""},
+      {"sku":"DEMO-OVER-L-NEG","size":"L","color":"Negro","mode":"stock","stock":5,"leadTime":""},
+      {"sku":"DEMO-OVER-XL-NEG","size":"XL","color":"Negro","mode":"stock","stock":2,"leadTime":""},
+      {"sku":"DEMO-OVER-M-BEI","size":"M","color":"Beige","mode":"stock","stock":2,"leadTime":""},
+      {"sku":"DEMO-OVER-L-BEI","size":"L","color":"Beige","mode":"stock","stock":3,"leadTime":""},
+      {"sku":"DEMO-OVER-XL-BEI","size":"XL","color":"Beige","mode":"bajo_pedido","stock":0,"leadTime":"3 a 5 días"}
+    ]
+  },
+  {
+    "id":"demo-floral-menta",
+    "name":"Remera Floral Menta",
+    "description":"Demo visual de una prenda femenina 100% algodón de la colección Floral & Arte.",
+    "collection":"Floral & Arte",
+    "tipo":"remera",
+    "para":"Mujer",
+    "fit":"Regular",
+    "priceGs":135000,
+    "image":"",
+    "published":true,
+    "variants":[
+      {"sku":"DEMO-MENT-S-MEN","size":"S","color":"Menta","mode":"stock","stock":3,"leadTime":""},
+      {"sku":"DEMO-MENT-M-MEN","size":"M","color":"Menta","mode":"stock","stock":4,"leadTime":""},
+      {"sku":"DEMO-MENT-L-MEN","size":"L","color":"Menta","mode":"stock","stock":2,"leadTime":""},
+      {"sku":"DEMO-MENT-S-ROS","size":"S","color":"Rosa","mode":"stock","stock":2,"leadTime":""},
+      {"sku":"DEMO-MENT-M-ROS","size":"M","color":"Rosa","mode":"stock","stock":3,"leadTime":""},
+      {"sku":"DEMO-MENT-L-ROS","size":"L","color":"Rosa","mode":"bajo_pedido","stock":0,"leadTime":"3 a 5 días"}
+    ]
+  },
+  {
+    "id":"demo-fe-beige",
+    "name":"Remera Fe Beige",
+    "description":"Demo de producto unisex 100% algodón con más de un color y varios talles.",
+    "collection":"Fe & Esperanza",
+    "tipo":"remera",
+    "para":"Unisex",
+    "fit":"Oversize",
+    "priceGs":150000,
+    "image":"",
+    "published":true,
+    "variants":[
+      {"sku":"DEMO-FEB-S-BEI","size":"S","color":"Beige","mode":"stock","stock":2,"leadTime":""},
+      {"sku":"DEMO-FEB-M-BEI","size":"M","color":"Beige","mode":"stock","stock":4,"leadTime":""},
+      {"sku":"DEMO-FEB-L-BEI","size":"L","color":"Beige","mode":"stock","stock":3,"leadTime":""},
+      {"sku":"DEMO-FEB-S-VER","size":"S","color":"Verde","mode":"stock","stock":1,"leadTime":""},
+      {"sku":"DEMO-FEB-M-VER","size":"M","color":"Verde","mode":"stock","stock":3,"leadTime":""},
+      {"sku":"DEMO-FEB-L-VER","size":"L","color":"Verde","mode":"stock","stock":2,"leadTime":""}
+    ]
+  },
+  {
+    "id":"demo-kepi-essential",
+    "name":"Kepi Essential",
+    "description":"Demo de accesorio para verificar la tarjeta de producto y el selector visual de color.",
+    "collection":"Esenciales",
+    "tipo":"kepi",
+    "para":"Unisex",
+    "fit":"Único",
+    "priceGs":95000,
+    "image":"",
+    "published":true,
+    "variants":[
+      {"sku":"DEMO-KEPI-U-NEG","size":"Único","color":"Negro","mode":"stock","stock":5,"leadTime":""},
+      {"sku":"DEMO-KEPI-U-BEI","size":"Único","color":"Beige","mode":"stock","stock":4,"leadTime":""},
+      {"sku":"DEMO-KEPI-U-BLA","size":"Único","color":"Blanco","mode":"stock","stock":3,"leadTime":""},
+      {"sku":"DEMO-KEPI-U-ROJ","size":"Único","color":"Rojo","mode":"stock","stock":2,"leadTime":""}
     ]
   }
 ]
