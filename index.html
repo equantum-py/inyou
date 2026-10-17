@@ -2,113 +2,129 @@
 <html lang="es-PY">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#f7f4ec" />
-  <meta name="description" content="IN YOU — Diseños con sentido. Remeras con diseños originales, pensadas para expresar lo que llevás dentro." />
-  <title>IN YOU · Diseños con sentido</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#f7f4ee" />
+  <meta name="description" content="IN YOU — Moda con intención. Descubrí prendas, colecciones y novedades." />
+  <title>IN YOU · Tienda</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="legal.css" />
   <script type="module" src="app.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#productos">Saltar al catálogo</a>
-  <div class="notice" id="notice">EN PREPARACIÓN · Sitio local de desarrollo, todavía no habilitado para ventas</div>
+  <div class="notice" id="notice">EN PREPARACIÓN · Sitio todavía no habilitado para ventas</div>
+
   <header class="site-header">
     <div class="header-inner container">
-      <a class="wordmark" href="#inicio" aria-label="IN YOU, ir al inicio"><span>in</span> You<span class="mint-dot">.</span></a>
-      <nav class="nav" aria-label="Navegación principal">
-        <a href="#inicio">Inicio</a><a href="#colecciones">Colecciones</a><a href="talles.html">Guía de talles</a><a href="#nosotros">Nosotros</a>
+      <button class="menu-button" type="button" id="openMenu" aria-label="Abrir menú">☰</button>
+      <a class="wordmark" href="#inicio" aria-label="IN YOU, ir al inicio"><span>in</span>You<span class="mint-dot">.</span></a>
+      <nav class="desktop-nav" aria-label="Navegación principal">
+        <a href="#novedades">Novedades</a><a href="#productos" data-audience-link="Mujer">Mujer</a><a href="#productos" data-audience-link="Hombre">Hombre</a><a href="#productos" data-audience-link="Unisex">Unisex</a><a href="#colecciones">Colecciones</a>
       </nav>
-      <button class="cart-button" type="button" id="openCart" aria-label="Abrir carrito de compras">
-        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 8h14l-1 13H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
-        <span class="cart-label">Carrito</span><span id="cartCount" class="count" aria-live="polite">0</span>
-      </button>
+      <div class="header-actions">
+        <button class="icon-action" type="button" id="openSearch" aria-label="Buscar">⌕</button>
+        <button class="icon-action favorites-header" type="button" id="openFavorites" aria-label="Favoritos">♡<span id="favoriteCount" class="mini-count">0</span></button>
+        <button class="icon-action cart-icon" type="button" id="openCart" aria-label="Abrir carrito">🛍<span id="cartCount" class="mini-count">0</span></button>
+      </div>
+    </div>
+    <div class="category-strip" aria-label="Accesos rápidos">
+      <div class="container category-strip-inner">
+        <button class="category-pill active" type="button" data-quick="Todos">Novedades</button>
+        <button class="category-pill" type="button" data-type-quick="remera">Remeras</button>
+        <button class="category-pill" type="button" data-audience-quick="Mujer">Mujer</button>
+        <button class="category-pill" type="button" data-audience-quick="Hombre">Hombre</button>
+        <button class="category-pill" type="button" data-audience-quick="Unisex">Unisex</button>
+        <button class="category-pill" type="button" data-type-quick="kepi">Kepis</button>
+        <a class="category-pill" href="#colecciones">Colecciones</a>
+      </div>
     </div>
   </header>
+
   <main>
     <section class="hero" id="inicio">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <div class="eyebrow"><span class="eyebrow-line"></span> EL ARTE DE LLEVAR LO QUE SENTÍS</div>
-          <h1>Lo que llevás<br/>puesto, <em>dice</em><br/>quién sos<span class="mint-dot">.</span></h1>
-          <p>Remeras con diseños originales que hablan de vos. Arte, simplicidad y mensajes con significado para cada momento.</p>
-          <a class="primary-link" href="#colecciones">Descubrir las colecciones <span aria-hidden="true">↗</span></a>
-          <div class="tiny-note">Diseños originales <span aria-hidden="true">·</span> Hecho con sentido <span aria-hidden="true">·</span> Paraguay</div>
+      <div class="hero-media">
+        <div class="hero-overlay"></div>
+        <div class="hero-visual hero-visual-one" aria-hidden="true">
+          <div class="fashion-silhouette shirt-light"></div>
+          <div class="fashion-silhouette shirt-dark"></div>
         </div>
-        <div class="hero-art" role="img" aria-label="Presentación gráfica de identidad IN YOU, no fotografía de producto">
-          <div class="hero-bg-circle"></div><div class="hero-orbit hero-orbit-1"></div><div class="hero-orbit hero-orbit-2"></div>
-          <div class="t-shirt tee-large"><div class="tee-print"><span class="flower-icon">✳</span><span class="tee-print-label">ser vos<br/>es arte<span class="mint-dot">.</span></span></div></div>
-          <div class="hero-sticker"><span class="sticker-iy">iY<span>.</span></span><small>Diseños con sentido</small></div>
-          <div class="hero-side-label">IN YOU · ORIGINAL DESIGN</div>
+        <div class="container hero-content">
+          <span class="hero-label">NUEVA TEMPORADA</span>
+          <h1>Prendas que hablan<br>por vos.</h1>
+          <p>Diseños con intención, para usar todos los días.</p>
+          <div class="hero-actions"><a class="btn-dark" href="#novedades">Ver novedades</a><a class="btn-light" href="#colecciones">Colecciones</a></div>
         </div>
       </div>
     </section>
-    <section class="section-intro container" id="colecciones">
-      <div class="section-kicker">NUESTRAS COLECCIONES</div>
-      <div class="heading-row"><h2>Cada diseño,<br/><em>una forma de expresarte.</em></h2><p>Elegí lo que conecta con vos. Cuatro maneras de llevar un mensaje propio.</p></div>
-      <div class="collection-grid" id="collections">
-        <a class="collection-card col-floral" href="#productos" data-filter="Floral & Arte"><div class="collection-graphic floral-graphic" aria-hidden="true"><span>✽</span><span>❋</span><span>✻</span></div><div class="collection-info"><small>01 / ARTE</small><strong>Floral & Arte</strong><span class="arrow">↗</span></div></a>
-        <a class="collection-card col-essential" href="#productos" data-filter="Esenciales"><div class="collection-graphic essential-graphic" aria-hidden="true"><span>in</span><span>You.</span></div><div class="collection-info"><small>02 / ESENCIA</small><strong>Esenciales</strong><span class="arrow">↗</span></div></a>
-        <a class="collection-card col-faith" href="#productos" data-filter="Fe & Esperanza"><div class="collection-graphic faith-graphic" aria-hidden="true"><span>luz</span><span>✧</span></div><div class="collection-info"><small>03 / MENSAJE</small><strong>Fe & Esperanza</strong><span class="arrow">↗</span></div></a>
-        <a class="collection-card col-moments" href="#productos" data-filter="Momentos Especiales"><div class="collection-graphic moments-graphic" aria-hidden="true"><span>♡</span><span>hoy es especial</span></div><div class="collection-info"><small>04 / CELEBRAR</small><strong>Momentos Especiales</strong><span class="arrow">↗</span></div></a>
+
+    <section class="shop-shortcuts container" aria-label="Comprar por sección">
+      <button type="button" data-audience-quick="Mujer"><span class="shortcut-image shortcut-women"></span><strong>Mujer</strong></button>
+      <button type="button" data-audience-quick="Hombre"><span class="shortcut-image shortcut-men"></span><strong>Hombre</strong></button>
+      <button type="button" data-audience-quick="Unisex"><span class="shortcut-image shortcut-unisex"></span><strong>Unisex</strong></button>
+      <button type="button" data-type-quick="kepi"><span class="shortcut-image shortcut-cap"></span><strong>Kepis</strong></button>
+    </section>
+
+    <section class="fashion-section container" id="novedades">
+      <div class="section-heading"><div><span class="section-kicker">RECIÉN LLEGADOS</span><h2>Novedades</h2></div><a href="#productos">Ver todo →</a></div>
+      <div class="product-grid featured-grid" id="productGrid"></div>
+      <div class="catalog-empty" id="catalogEmpty" hidden><h3>Estamos preparando esta selección.</h3><p>Los productos aparecerán acá cuando estén listos.</p></div>
+    </section>
+
+    <section class="collections-section" id="colecciones">
+      <div class="container">
+        <div class="section-heading"><div><span class="section-kicker">DESCUBRÍ</span><h2>Colecciones</h2></div><a href="#productos">Ver todas →</a></div>
+        <div class="collection-grid" id="collections">
+          <button class="collection-card collection-floral" data-filter="Floral & Arte"><span>01</span><strong>Floral & Arte</strong><small>Diseños con expresión</small></button>
+          <button class="collection-card collection-essential" data-filter="Esenciales"><span>02</span><strong>Esenciales</strong><small>Lo simple, bien hecho</small></button>
+          <button class="collection-card collection-faith" data-filter="Fe & Esperanza"><span>03</span><strong>Fe & Esperanza</strong><small>Mensajes que acompañan</small></button>
+          <button class="collection-card collection-moments" data-filter="Momentos Especiales"><span>04</span><strong>Momentos Especiales</strong><small>Para regalar y recordar</small></button>
+        </div>
       </div>
     </section>
+
+    <section class="season-section container">
+      <article class="season-card">
+        <div class="season-copy"><span class="section-kicker">TEMPORADA</span><h2>Primavera / Verano</h2><p>Colores suaves, básicos y diseños livianos para todos los días.</p><a href="#productos">Explorar temporada →</a></div>
+        <div class="season-art" aria-hidden="true"><div class="season-circle"></div><div class="season-shirt"></div></div>
+      </article>
+    </section>
+
+    <section class="looks-section container">
+      <div class="section-heading"><div><span class="section-kicker">INSPIRACIÓN</span><h2>Looks para combinar</h2></div></div>
+      <div class="looks-grid">
+        <article><div class="look look-one"></div><h3>Urbano esencial</h3><p>Remera clara + tonos neutros.</p></article>
+        <article><div class="look look-two"></div><h3>Oversize diario</h3><p>Volumen, comodidad y color.</p></article>
+      </div>
+    </section>
+
+    <section class="brand-block" id="nosotros">
+      <div class="container brand-grid"><div><span class="section-kicker">HECHO CON INTENCIÓN</span><h2>Diseño, producción<br>y detalles.</h2><p>En InYou cada prenda parte de una idea simple: crear algo que tenga sentido para quien lo usa.</p><a href="#colecciones">Conocer InYou →</a></div><div class="brand-visual" aria-hidden="true"><span>inYou.</span></div></div>
+    </section>
+
     <section class="products-section" id="productos">
       <div class="container">
-        <div class="section-kicker">EL CATÁLOGO</div>
-        <div class="heading-row"><h2>Encontrá tu próximo<br/><em>favorito.</em></h2><p>Diseños con significado y atención personalizada para elegir bien.</p></div>
-        <div class="filter-row" role="group" aria-label="Filtrar productos por colección" id="filters">
-          <button class="filter active" data-filter="Todas" aria-pressed="true">Todos</button>
-          <button class="filter" data-filter="Floral & Arte" aria-pressed="false">Floral & Arte</button>
-          <button class="filter" data-filter="Esenciales" aria-pressed="false">Esenciales</button>
-          <button class="filter" data-filter="Fe & Esperanza" aria-pressed="false">Fe & Esperanza</button>
-          <button class="filter" data-filter="Momentos Especiales" aria-pressed="false">Momentos Especiales</button>
+        <div class="section-heading catalog-title"><div><span class="section-kicker">CATÁLOGO</span><h2>Explorá todo</h2></div></div>
+        <div class="catalog-tools">
+          <div class="filter-row" id="filters"><button class="filter active" data-filter="Todas">Todo</button><button class="filter" data-filter="Floral & Arte">Floral & Arte</button><button class="filter" data-filter="Esenciales">Esenciales</button><button class="filter" data-filter="Fe & Esperanza">Fe & Esperanza</button><button class="filter" data-filter="Momentos Especiales">Momentos Especiales</button></div>
+          <div class="chip-row" id="typeFilters"><button class="chip active" data-type="Todos">Todos</button><button class="chip" data-type="remera">Remeras</button><button class="chip" data-type="kepi">Kepis</button></div>
+          <div class="chip-row" id="audienceFilters"><button class="chip active" data-audience="Todos">Todos</button><button class="chip" data-audience="Mujer">Mujer</button><button class="chip" data-audience="Hombre">Hombre</button><button class="chip" data-audience="Unisex">Unisex</button></div>
         </div>
-        <div class="chip-row" role="group" aria-label="Filtrar por tipo de producto" id="typeFilters">
-          <span class="chip-label">Tipo</span>
-          <button class="chip active" type="button" data-type="Todos" aria-pressed="true">Todos</button>
-          <button class="chip" type="button" data-type="remera" aria-pressed="false">Remeras</button>
-          <button class="chip" type="button" data-type="kepi" aria-pressed="false">Kepis</button>
-        </div>
-        <div class="chip-row" role="group" aria-label="Filtrar por público" id="audienceFilters">
-          <span class="chip-label">Para</span>
-          <button class="chip active" type="button" data-audience="Todos" aria-pressed="true">Todos</button>
-          <button class="chip" type="button" data-audience="Mujer" aria-pressed="false">Mujer</button>
-          <button class="chip" type="button" data-audience="Hombre" aria-pressed="false">Hombre</button>
-          <button class="chip" type="button" data-audience="Unisex" aria-pressed="false">Unisex</button>
-        </div>
-        <div class="product-grid" id="productGrid"></div>
-        <div class="catalog-empty" id="catalogEmpty" hidden><div class="empty-sun">✳</div><h3>Estamos preparando esta colección.</h3><p>Los productos se mostrarán aquí cuando sus diseños, precios y disponibilidad estén verificados.</p></div>
+        <div class="catalog-note">Usá los filtros para refinar la selección. La grilla destacada de arriba se actualiza con estos filtros.</div>
       </div>
     </section>
-    <section class="brand-block" id="nosotros">
-      <div class="container brand-grid"><div class="brand-identity"><img src="assets/inyou-brand.jpg" alt="Logotipo original de IN YOU, diseños con sentido" /></div><div class="brand-message"><div class="section-kicker">SOMOS IN YOU</div><h2>Tu esencia merece<br/><em>estar a la vista.</em></h2><p>Creemos en prendas que comunican, inspiran y acompañan. Nuestra idea es simple: crear diseños con intención, para personas con historias distintas.</p><p>Desde Paraguay, con atención cercana y sin perder de vista los detalles.</p></div></div>
-    </section>
-    <section class="group-section container" id="grupos" aria-labelledby="gruposTitulo">
-      <div class="group-grid">
-        <div>
-          <div class="section-kicker">PEDIDOS PARA GRUPOS</div>
-          <h2 id="gruposTitulo">Para tu iglesia, colegio<br/><em>o club.</em></h2>
-          <p>Armamos pedidos para grupos con un mismo diseño y talles variados. Escribinos con la cantidad, los talles aproximados y la fecha que necesitan, y te pasamos precio por cantidad y plazo de producción.</p>
-        </div>
-        <div class="group-action">
-          <button type="button" class="checkout" id="groupConsult" disabled aria-describedby="groupReason">Consultar pedido de grupo ↗</button>
-          <p class="cart-explainer" id="groupReason">Disponible cuando se habilite la atención por WhatsApp.</p>
-        </div>
-      </div>
-    </section>
-    <section class="cta-section"><div class="container cta-inner"><span>✳</span><div><h2>Un diseño puede decir mucho.</h2><p>Elegí con intención. Vestí con sentido.</p></div><a href="#colecciones" class="secondary-link">Explorar colecciones ↗</a></div></section>
   </main>
-  <footer class="footer"><div class="container footer-grid"><div><div class="wordmark footer-logo"><span>in</span> You<span class="mint-dot">.</span></div><p>Diseños con sentido, desde Paraguay.</p></div><div class="footer-links"><a href="#inicio">Inicio</a><a href="#colecciones">Colecciones</a><a href="talles.html">Guía de talles</a><a href="politicas.html">Políticas</a><a href="#nosotros">Nosotros</a></div><div class="footer-legal">© IN YOU <span id="year"></span><br/>Sitio en desarrollo · No habilitado para ventas</div></div></footer>
 
-  <div id="demoBanner" class="demo-banner" hidden role="status">DEMOSTRACIÓN: productos, precios y stock ficticios. No se pueden enviar pedidos.</div>
+  <footer class="footer"><div class="container footer-grid"><div><div class="wordmark"><span>in</span>You<span class="mint-dot">.</span></div><p>Diseños con sentido, desde Paraguay.</p></div><div class="footer-links"><a href="#novedades">Novedades</a><a href="#colecciones">Colecciones</a><a href="talles.html">Guía de talles</a><a href="politicas.html">Políticas</a></div><div class="footer-legal">© IN YOU <span id="year"></span></div></div></footer>
+
+  <div class="mobile-menu" id="mobileMenu" hidden><div class="mobile-menu-head"><strong>inYou.</strong><button id="closeMenu" aria-label="Cerrar">×</button></div><nav><a href="#inicio">Inicio</a><a href="#novedades">Novedades</a><a href="#productos" data-audience-link="Mujer">Mujer</a><a href="#productos" data-audience-link="Hombre">Hombre</a><a href="#productos" data-audience-link="Unisex">Unisex</a><a href="#colecciones">Colecciones</a><a href="talles.html">Guía de talles</a></nav></div>
+
+  <div class="search-panel" id="searchPanel" hidden><div class="search-shell"><div class="search-top"><input id="smartSearch" type="search" placeholder="Buscar remeras, colores, colecciones..." autocomplete="off"><button id="closeSearch">×</button></div><div id="searchSuggestions" class="search-suggestions"><p>Probá buscar “remera”, “floral”, “mujer” o “kepi”.</p></div></div></div>
+
+  <div class="favorites-panel" id="favoritesPanel" hidden><div class="favorites-shell"><div class="drawer-heading"><div><span class="section-kicker">GUARDADOS</span><h2>Mis favoritos</h2></div><button id="closeFavorites" class="icon-button">×</button></div><div id="favoriteItems" class="favorite-items"></div></div></div>
+
+  <div id="demoBanner" class="demo-banner" hidden>DEMOSTRACIÓN: productos, precios y stock ficticios.</div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div class="drawer-backdrop" id="backdrop" hidden></div>
-  <aside class="drawer" id="cartDrawer" aria-modal="true" aria-hidden="true" role="dialog" aria-label="Carrito de compras" tabindex="-1" inert>
-    <div class="drawer-heading"><div><div class="section-kicker">TU SELECCIÓN</div><h2>Mi carrito<span class="mint-dot">.</span></h2></div><button type="button" id="closeCart" class="icon-button" aria-label="Cerrar carrito">×</button></div>
-    <div id="cartItems" class="cart-items"></div>
-    <div class="drawer-footer"><div class="subtotal"><span>Subtotal estimado</span><strong id="cartSubtotal">G. 0</strong></div><p>El envío se cotiza por separado. La disponibilidad y el pago se confirman por WhatsApp. Abrir el chat no genera un pedido.</p><button type="button" class="checkout" id="checkout" disabled>Consultar por WhatsApp ↗</button><p class="cart-explainer" id="checkoutReason"></p></div>
-  </aside>
+  <aside class="drawer" id="cartDrawer" aria-modal="true" aria-hidden="true" role="dialog" aria-label="Carrito" tabindex="-1" inert><div class="drawer-heading"><div><span class="section-kicker">TU SELECCIÓN</span><h2>Mi carrito</h2></div><button id="closeCart" class="icon-button">×</button></div><div id="cartItems" class="cart-items"></div><div class="drawer-footer"><div class="subtotal"><span>Subtotal estimado</span><strong id="cartSubtotal">G. 0</strong></div><p>El envío y pago se confirman por WhatsApp.</p><button class="checkout" id="checkout" disabled>Consultar por WhatsApp ↗</button><p id="checkoutReason"></p></div></aside>
 </body>
 </html>
