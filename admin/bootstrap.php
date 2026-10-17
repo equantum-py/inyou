@@ -42,11 +42,17 @@ function requireAuth():void{if(empty($_SESSION['admin_id'])){header('Location: /
 function role():string{return (string)($_SESSION['admin_role']??'');}
 function canManageCatalog():bool{return in_array(role(),['owner','admin','catalog'],true);}
 function canManageUsers():bool{return role()==='owner';}
+function canManageSettings():bool{return in_array(role(),['owner','admin'],true);}
 function canViewAudit():bool{return in_array(role(),['owner','admin'],true);}
 
-function auditLog(PDO $pdo,string $action,string $entityType,?int $entityId=null):void{
+function auditLog(PDO $pdo,string $action,string $entityType,?int $entityId=null,?array $details=null):void{
+    $actor=(int)($_SESSION['admin_id']??0);
     try{
-        $actor=(int)($_SESSION['admin_id']??0);
+        $q=$pdo->prepare('INSERT INTO admin_audit_log (admin_user_id,action,entity_type,entity_id,details,created_at) VALUES (?,?,?,?,?,CURRENT_TIMESTAMP)');
+        $q->execute([$actor>0?$actor:null,mb_substr($action,0,100),mb_substr($entityType,0,80),$entityId,$details?json_encode($details,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES):null]);
+        return;
+    }catch(Throwable $ignore){}
+    try{
         $label=$action.($entityId!==null?' #'.$entityId:'').($actor>0?' · admin '.$actor:'');
         if(mb_strlen($label)>190)$label=mb_substr($label,0,190);
         $q=$pdo->prepare('INSERT INTO admin_audit_log (action,entity_type,created_at) VALUES (?,?,CURRENT_TIMESTAMP)');
@@ -60,8 +66,10 @@ function adminSidebar(string $active=''):void{
         'products'=>['/admin/products.php','Productos'],
         'collections'=>['/admin/collections.php','Colecciones'],
         'inventory'=>['/admin/inventory.php','Inventario'],
+        'media'=>['/admin/media.php','Medios'],
     ];
-    if(canViewAudit())$items['audit']=['/admin/audit.php','Auditoría'];
+    if(canManageSettings())$items['settings']=['/admin/settings.php','Configuración'];
+    if(canViewAudit())$items['audit']=['/admin/audit.php','Actividad'];
     if(canManageUsers())$items['users']=['/admin/users.php','Usuarios'];
     echo '<aside class="sidebar"><div class="brand">in<span>You</span><i>.</i></div><div class="eyebrow">PANEL ADMINISTRATIVO</div><nav>';
     foreach($items as $key=>$item){$cls=$key===$active?' class="selected"':'';echo '<a'.$cls.' href="'.h($item[0]).'">'.h($item[1]).'</a>';}
