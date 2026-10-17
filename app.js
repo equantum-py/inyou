@@ -90,8 +90,9 @@ async function load(){
   if(demo){qs('#demoBanner').hidden=false;qs('#notice').textContent='VISTA DEMO · No es un catálogo real · Sin ventas habilitadas';}
   try{
     const catalogUrl=demo?'./data/catalog.demo.json':'./api/v1/products.php';
+    const configUrl=demo?'./data/config.json':'./api/v1/config.php';
     const [configRes,catalogRes]=await Promise.all([
-      fetch('./data/config.json',{cache:'no-store'}),
+      fetch(configUrl,{cache:'no-store',headers:{'Accept':'application/json'}}),
       fetch(catalogUrl,{cache:'no-store',headers:{'Accept':'application/json'}})
     ]);
     if(!configRes.ok)throw new Error('No fue posible leer la configuración de la tienda.');
