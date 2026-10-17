@@ -9,11 +9,14 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
   $email=strtolower(trim((string)($_POST['email']??'')));
   $password=(string)($_POST['password']??'');
   try {
-   $q=db()->prepare('SELECT id,email,display_name,password_hash,role FROM admin_users WHERE email=? AND is_active=1 LIMIT 1');
+   $pdo=db();
+   $q=$pdo->prepare('SELECT id,email,display_name,password_hash,role FROM admin_users WHERE email=? AND is_active=1 LIMIT 1');
    $q->execute([$email]);$u=$q->fetch();
    if($u&&password_verify($password,$u['password_hash'])) {
     session_regenerate_id(true);unset($_SESSION['fails'],$_SESSION['lock_until']);
     $_SESSION['admin_id']=(int)$u['id'];$_SESSION['admin_name']=$u['display_name'];$_SESSION['admin_role']=$u['role'];$_SESSION['csrf']=bin2hex(random_bytes(32));
+    try{$pdo->prepare('UPDATE admin_users SET last_login_at=CURRENT_TIMESTAMP,updated_at=CURRENT_TIMESTAMP WHERE id=?')->execute([(int)$u['id']]);}catch(Throwable $ignore){}
+    auditLog($pdo,'admin.login','admin_user',(int)$u['id']);
     header('Location: /admin/');exit;
    }
    $_SESSION['fails']=($_SESSION['fails']??0)+1;
