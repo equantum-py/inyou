@@ -11,7 +11,7 @@
   <script type="module" src="app.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#productos">Saltar al catálogo</a>
+  <a class="skip-link" href="#novedades">Saltar al catálogo</a>
   <div class="notice" id="notice">EN PREPARACIÓN · Sitio todavía no habilitado para ventas</div>
 
   <header class="site-header">
@@ -19,13 +19,16 @@
       <button class="menu-button" type="button" id="openMenu" aria-label="Abrir menú">☰</button>
       <a class="wordmark" href="#inicio" aria-label="IN YOU, ir al inicio"><span>in</span>You<span class="mint-dot">.</span></a>
       <nav class="desktop-nav" aria-label="Navegación principal">
-        <a href="#novedades">Novedades</a><a href="#productos" data-audience-link="Mujer">Mujer</a><a href="#productos" data-audience-link="Hombre">Hombre</a><a href="#productos" data-audience-link="Unisex">Unisex</a><a href="#colecciones">Colecciones</a>
+        <a href="#novedades">Novedades</a><a href="#novedades" data-audience-link="Mujer">Mujer</a><a href="#novedades" data-audience-link="Hombre">Hombre</a><a href="#novedades" data-audience-link="Unisex">Unisex</a><a href="#colecciones">Colecciones</a>
       </nav>
       <div class="header-actions">
         <button class="icon-action" type="button" id="openSearch" aria-label="Buscar">⌕</button>
         <button class="icon-action favorites-header" type="button" id="openFavorites" aria-label="Favoritos">♡<span id="favoriteCount" class="mini-count">0</span></button>
         <button class="icon-action cart-icon" type="button" id="openCart" aria-label="Abrir carrito">🛍<span id="cartCount" class="mini-count">0</span></button>
       </div>
+    </div>
+    <div class="mobile-search-row container">
+      <button type="button" id="openSearchMobile" class="mobile-search-launcher" aria-label="Buscar productos">⌕ <span>Buscar prendas, colecciones y colores</span></button>
     </div>
     <div class="category-strip" aria-label="Accesos rápidos">
       <div class="container category-strip-inner">
@@ -43,11 +46,6 @@
   <main>
     <section class="hero" id="inicio">
       <div class="hero-media">
-        <div class="hero-overlay"></div>
-        <div class="hero-visual hero-visual-one" aria-hidden="true">
-          <div class="fashion-silhouette shirt-light"></div>
-          <div class="fashion-silhouette shirt-dark"></div>
-        </div>
         <div class="container hero-content">
           <span class="hero-label">NUEVA TEMPORADA</span>
           <h1>Prendas que hablan<br>por vos.</h1>
@@ -65,14 +63,14 @@
     </section>
 
     <section class="fashion-section container" id="novedades">
-      <div class="section-heading"><div><span class="section-kicker">RECIÉN LLEGADOS</span><h2>Novedades</h2></div><a href="#productos">Ver todo →</a></div>
+      <div class="section-heading"><div><span class="section-kicker">RECIÉN LLEGADOS</span><h2>Novedades</h2></div><button class="text-link" type="button" data-quick="Todos">Ver todo →</button></div>
       <div class="product-grid featured-grid" id="productGrid"></div>
       <div class="catalog-empty" id="catalogEmpty" hidden><h3>Estamos preparando esta selección.</h3><p>Los productos aparecerán acá cuando estén listos.</p></div>
     </section>
 
     <section class="collections-section" id="colecciones">
       <div class="container">
-        <div class="section-heading"><div><span class="section-kicker">DESCUBRÍ</span><h2>Colecciones</h2></div><a href="#productos">Ver todas →</a></div>
+        <div class="section-heading"><div><span class="section-kicker">DESCUBRÍ</span><h2>Colecciones</h2></div></div>
         <div class="collection-grid" id="collections">
           <button class="collection-card collection-floral" data-filter="Floral & Arte"><span>01</span><strong>Floral & Arte</strong><small>Diseños con expresión</small></button>
           <button class="collection-card collection-essential" data-filter="Esenciales"><span>02</span><strong>Esenciales</strong><small>Lo simple, bien hecho</small></button>
@@ -84,8 +82,8 @@
 
     <section class="season-section container">
       <article class="season-card">
-        <div class="season-copy"><span class="section-kicker">TEMPORADA</span><h2>Primavera / Verano</h2><p>Colores suaves, básicos y diseños livianos para todos los días.</p><a href="#productos">Explorar temporada →</a></div>
-        <div class="season-art" aria-hidden="true"><div class="season-circle"></div><div class="season-shirt"></div></div>
+        <div class="season-photo" aria-hidden="true"></div>
+        <div class="season-copy"><span class="section-kicker">TEMPORADA</span><h2>Primavera / Verano</h2><p>Colores suaves, básicos y diseños livianos para todos los días.</p><button class="text-link inverse" type="button" data-quick="Todos">Explorar temporada →</button></div>
       </article>
     </section>
 
@@ -98,25 +96,20 @@
     </section>
 
     <section class="brand-block" id="nosotros">
-      <div class="container brand-grid"><div><span class="section-kicker">HECHO CON INTENCIÓN</span><h2>Diseño, producción<br>y detalles.</h2><p>En InYou cada prenda parte de una idea simple: crear algo que tenga sentido para quien lo usa.</p><a href="#colecciones">Conocer InYou →</a></div><div class="brand-visual" aria-hidden="true"><span>inYou.</span></div></div>
-    </section>
-
-    <section class="products-section" id="productos">
-      <div class="container">
-        <div class="section-heading catalog-title"><div><span class="section-kicker">CATÁLOGO</span><h2>Explorá todo</h2></div></div>
-        <div class="catalog-tools">
-          <div class="filter-row" id="filters"><button class="filter active" data-filter="Todas">Todo</button><button class="filter" data-filter="Floral & Arte">Floral & Arte</button><button class="filter" data-filter="Esenciales">Esenciales</button><button class="filter" data-filter="Fe & Esperanza">Fe & Esperanza</button><button class="filter" data-filter="Momentos Especiales">Momentos Especiales</button></div>
-          <div class="chip-row" id="typeFilters"><button class="chip active" data-type="Todos">Todos</button><button class="chip" data-type="remera">Remeras</button><button class="chip" data-type="kepi">Kepis</button></div>
-          <div class="chip-row" id="audienceFilters"><button class="chip active" data-audience="Todos">Todos</button><button class="chip" data-audience="Mujer">Mujer</button><button class="chip" data-audience="Hombre">Hombre</button><button class="chip" data-audience="Unisex">Unisex</button></div>
-        </div>
-        <div class="catalog-note">Usá los filtros para refinar la selección. La grilla destacada de arriba se actualiza con estos filtros.</div>
-      </div>
+      <div class="container brand-grid"><div class="brand-copy"><span class="section-kicker">HECHO CON INTENCIÓN</span><h2>Diseño, producción<br>y detalles.</h2><p>En InYou cada prenda parte de una idea simple: crear algo que tenga sentido para quien lo usa.</p><a href="#colecciones">Conocer InYou →</a></div><div class="brand-visual" aria-hidden="true"><span>inYou.</span></div></div>
     </section>
   </main>
 
   <footer class="footer"><div class="container footer-grid"><div><div class="wordmark"><span>in</span>You<span class="mint-dot">.</span></div><p>Diseños con sentido, desde Paraguay.</p></div><div class="footer-links"><a href="#novedades">Novedades</a><a href="#colecciones">Colecciones</a><a href="talles.html">Guía de talles</a><a href="politicas.html">Políticas</a></div><div class="footer-legal">© IN YOU <span id="year"></span></div></div></footer>
 
-  <div class="mobile-menu" id="mobileMenu" hidden><div class="mobile-menu-head"><strong>inYou.</strong><button id="closeMenu" aria-label="Cerrar">×</button></div><nav><a href="#inicio">Inicio</a><a href="#novedades">Novedades</a><a href="#productos" data-audience-link="Mujer">Mujer</a><a href="#productos" data-audience-link="Hombre">Hombre</a><a href="#productos" data-audience-link="Unisex">Unisex</a><a href="#colecciones">Colecciones</a><a href="talles.html">Guía de talles</a></nav></div>
+  <nav class="mobile-bottom-nav" aria-label="Navegación móvil">
+    <a href="#inicio"><span>⌂</span><small>Inicio</small></a>
+    <a href="#colecciones"><span>▦</span><small>Categorías</small></a>
+    <button type="button" id="openFavoritesBottom"><span>♡</span><small>Favoritos</small></button>
+    <button type="button" id="openCartBottom"><span>🛍</span><small>Carrito</small></button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu" hidden><div class="mobile-menu-head"><strong>inYou.</strong><button id="closeMenu" aria-label="Cerrar">×</button></div><nav><a href="#inicio">Inicio</a><a href="#novedades">Novedades</a><a href="#novedades" data-audience-link="Mujer">Mujer</a><a href="#novedades" data-audience-link="Hombre">Hombre</a><a href="#novedades" data-audience-link="Unisex">Unisex</a><a href="#colecciones">Colecciones</a><a href="talles.html">Guía de talles</a></nav></div>
 
   <div class="search-panel" id="searchPanel" hidden><div class="search-shell"><div class="search-top"><input id="smartSearch" type="search" placeholder="Buscar remeras, colores, colecciones..." autocomplete="off"><button id="closeSearch">×</button></div><div id="searchSuggestions" class="search-suggestions"><p>Probá buscar “remera”, “floral”, “mujer” o “kepi”.</p></div></div></div>
 
