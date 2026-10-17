@@ -19,6 +19,8 @@ function auditEntityLabel(string $type):string{
 
 function auditActionLabel(string $action):string{
     $map=[
+        'admin.login'=>'Inicio de sesión',
+        'admin.logout'=>'Cierre de sesión',
         'product.create'=>'Producto creado',
         'product.update'=>'Producto actualizado',
         'product.status.active'=>'Producto publicado',
