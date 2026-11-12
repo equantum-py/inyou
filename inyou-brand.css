@@ -96,3 +96,18 @@ body{accent-color:var(--brand-primary)}
   .site-header .brand-isotype{width:48px;height:48px}
   .footer .brand-isotype{width:68px;height:68px}
 }
+
+/* Logo horizontal oficial InYou: proporción original 900:455. */
+.site-header .wordmark,.footer .wordmark{line-height:0;min-width:0}
+.site-header .brand-isotype{width:175px;height:auto;aspect-ratio:900/455;object-fit:contain}
+.footer .brand-isotype{width:205px;height:auto;aspect-ratio:900/455;object-fit:contain}
+.mobile-menu-head .menu-brand img{width:155px;height:auto;aspect-ratio:900/455;object-fit:contain}
+@media(max-width:900px){
+ .site-header .brand-isotype{width:135px;height:auto}
+ .footer .brand-isotype{width:190px;height:auto}
+}
+@media(max-width:430px){
+ .site-header .brand-isotype{width:120px;height:auto}
+ .footer .brand-isotype{width:168px;height:auto}
+ .mobile-menu-head .menu-brand img{width:145px;height:auto}
+}
