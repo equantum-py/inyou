@@ -8,6 +8,9 @@ RUN docker-php-ext-install pdo_mysql \
 WORKDIR /var/www/html
 COPY . /var/www/html
 
+# Permitir fotos hasta 10 MB: POST incluye multipart/form-data.
+RUN printf '%s\n' 'upload_max_filesize=10M' 'post_max_size=12M' 'memory_limit=128M' 'max_execution_time=75' > /usr/local/etc/php/conf.d/inyou-uploads.ini
+
 RUN chown -R www-data:www-data /var/www/html/assets/products \
     && chmod -R 775 /var/www/html/assets/products
 
