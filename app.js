@@ -57,13 +57,31 @@ function productCard(product,{favoriteOnly=false}={}){
     const image=node('img');image.src=illustrativePhoto||product.image;image.alt=illustrativePhoto?`Fotografía referencial para ${product.name}`:product.images?.find(img=>img.src===product.image)?.alt||`Fotografía de ${product.name}`;image.loading='lazy';image.decoding='async';image.addEventListener('error',()=>{image.remove();art.append(illustration())});art.append(image);
     if(illustrativePhoto)art.append(node('span','product-tag sample-photo-label','Imagen referencial'));
   }else art.append(illustration());
+  // Galería navegable sin abrir la ficha: se muestran todas las fotos publicadas.
+  const gallery=Array.isArray(product.images)?product.images.filter(p=>p&&p.src):[];
+  if(!illustrativePhoto&&gallery.length>1){
+    const photo=art.querySelector('img');
+    if(photo){
+      let index=0;
+      const go=(offset)=>{index=(index+offset+gallery.length)%gallery.length;photo.src=gallery[index].src;photo.alt=gallery[index].alt||`Foto ${index+1} de ${product.name}`;counter.textContent=`${index+1} / ${gallery.length}`;};
+      const prev=node('button','gallery-nav gallery-prev','‹'),next=node('button','gallery-nav gallery-next','›'),counter=node('span','gallery-count',`1 / ${gallery.length}`);
+      prev.type=next.type='button';prev.setAttribute('aria-label',`Foto anterior de ${product.name}`);next.setAttribute('aria-label',`Foto siguiente de ${product.name}`);
+      prev.addEventListener('click',e=>{e.stopPropagation();go(-1)});
+      next.addEventListener('click',e=>{e.stopPropagation();go(1)});
+      art.append(prev,next,counter);
+    }
+  }
   if(product.collection)art.append(node('span','product-tag',product.collection));
   const fav=node('button',`favorite-btn${isFavorite(product)?' active':''}`,isFavorite(product)?'♥':'♡');fav.type='button';fav.setAttribute('aria-label',isFavorite(product)?`Quitar ${product.name} de favoritos`:`Guardar ${product.name} en favoritos`);fav.addEventListener('click',(e)=>{e.stopPropagation();toggleFavorite(product)});art.append(fav);
 
   const facts=[TYPE_LABEL[product.tipo]||'Remera',product.para,product.fit].filter(Boolean).join(' · ');
   const range=productPriceRange(product);const price=node('div','product-price',range.min===range.max?money(range.min):`Desde ${money(range.min)}`);
   const info=node('div','product-info');
-  info.append(node('h3','product-title',product.name),node('div','product-facts',facts),price);
+  const detailUrl='/product.html?id='+encodeURIComponent(product.id);
+  const productLink=node('a','product-detail-link',product.name);productLink.href=detailUrl;productLink.setAttribute('aria-label',`Ver detalles de ${product.name}`);
+  const title=node('h3','product-title');title.append(productLink);
+  info.append(title,node('div','product-facts',facts),price);
+  const viewDetail=node('a','product-view-detail','Ver detalles y todas las fotos');viewDetail.href=detailUrl;info.append(viewDetail);
 
   const labels=variantLabels(product);
   const variantInfo=node('div','variant-info');
@@ -134,6 +152,7 @@ async function load(){
   qs('#year').textContent=new Date().getFullYear();favorites=readFavorites();renderFavoriteCount();if(demo){qs('#demoBanner').hidden=false;qs('#notice').textContent='VISTA DE COLECCIÓN · Artículos ilustrativos · Sin ventas habilitadas'}
   try{const catalogUrl=demo?'./data/catalog.demo.json':'./api/v1/products.php';const configUrl=demo?'./data/config.json':'./api/v1/config.php';const [configRes,catalogRes]=await Promise.all([fetch(configUrl,{cache:'no-store',headers:{Accept:'application/json'}}),fetch(catalogUrl,{cache:'no-store',headers:{Accept:'application/json'}})]);if(!configRes.ok)throw new Error('No fue posible leer la configuración.');if(!catalogRes.ok)throw new Error('No fue posible cargar el catálogo.');config=await configRes.json();catalog=normalizeCatalog(await catalogRes.json());cart=cleanCart(readCart(),catalog);writeCart()}catch(e){console.error(e);toast('No se pudo cargar el catálogo.');catalog=[];cart=[]}
   populateVariantFilters();renderCatalog();renderCart();renderFavorites();
+  if(params.get('carrito')==='1'&&cart.length){openCart();history.replaceState(null,'',location.pathname+location.hash);}
 }
 
 qs('#openCart')?.addEventListener('click',openCart);qs('#openCartBottom')?.addEventListener('click',openCart);qs('#closeCart')?.addEventListener('click',closeCart);qs('#backdrop')?.addEventListener('click',closeCart);qs('#checkout')?.addEventListener('click',handleCheckout);
