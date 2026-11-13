@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # InYou: mantenimiento manual y conservador del registro Docker Vercel.
 set -euo pipefail
-MODE="\${1:---dry-run}"
+MODE="${1:---dry-run}"
 if [[ "$MODE" != "--dry-run" && "$MODE" != "--apply" ]]; then
   echo "Uso: bash scripts/cleanup-vcr.sh --dry-run | --apply"; exit 2
 fi
@@ -17,12 +17,12 @@ mapfile -t CANDIDATES < <(
       }
     }' | sort -k3,3nr | head -n 8
 )
-if (( \${#CANDIDATES[@]} == 0 )); then
+if (( ${#CANDIDATES[@]} == 0 )); then
   echo "No hay imágenes antiguas elegibles. Nada que borrar."
   exit 0
 fi
 echo "Candidatas creadas hace 14 días o más (máximo 8):"
-for LINE in "\${CANDIDATES[@]}"; do
+for LINE in "${CANDIDATES[@]}"; do
   read -r ID TAG DAYS <<< "$LINE"
   echo "  $ID · tag $TAG · $DAYS días"
 done
@@ -33,7 +33,7 @@ fi
 echo "ATENCIÓN: es irreversible; puede afectar un despliegue histórico."
 read -r -p "Escribí LIMPIAR para confirmar: " ANSWER
 if [[ "$ANSWER" != "LIMPIAR" ]]; then echo "Cancelado."; exit 0; fi
-for LINE in "\${CANDIDATES[@]}"; do
+for LINE in "${CANDIDATES[@]}"; do
   read -r ID TAG DAYS <<< "$LINE"
   echo "Eliminando $ID"
   printf 'yes\n' | npx --yes vercel@65.15.0 vcr image delete dockerfile "$ID" --project inyou --scope equantum-pys-projects
