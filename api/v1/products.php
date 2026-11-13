@@ -20,7 +20,7 @@ function validImagePath(string $path): bool
     return inyouStorageIsPath($path)
         || ($path !== ''
         && !str_contains($path, '..')
-        && (bool)preg_match('#^assets/products/[a-zA-Z0-9._/-]+\.(jpg|jpeg|png|webp)$#i', $path);
+        && (bool)preg_match('#^assets/products/[a-zA-Z0-9._/-]+\.(jpg|jpeg|png|webp)$#i', $path));
 }
 
 try {
@@ -68,7 +68,7 @@ try {
          ORDER BY pv.sort_order ASC, pv.id ASC"
     );
 
-    // Las nuevas imágenes se sirven desde almacenamiento MySQL persistente.
+    // Las nuevas imágenes se sirven desde Supabase Storage; compatibilidad con cargas MySQL.
     // Conservamos compatibilidad con archivos anteriores que todavía existan.
     $imageHasBlobs=(bool)$pdo->query("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='product_image_blobs'")->fetchColumn();
     $imageStmt = $pdo->prepare(
