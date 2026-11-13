@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es-PY">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#70081E">
+<title>Detalle del producto · InYou</title>
+<meta name="description" content="Descubrí los detalles, las fotografías, los talles y los colores disponibles en InYou.">
+<link rel="icon" href="/assets/inyou-isotipo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/product-detail.css">
+<script type="module" src="/product-detail.js"></script>
+</head>
+<body>
+<header class="pdp-header"><div class="pdp-head-inner"><a class="pdp-logo" href="/" aria-label="InYou, volver a inicio"><img src="/assets/inyou-logo-horizontal.svg" alt="InYou" width="160"></a><a class="pdp-return" href="/#destacados">← Volver a la tienda</a><a href="/?carrito=1" class="pdp-cart" aria-label="Ver carrito">Bolsa <span id="cartQuantity">0</span></a></div></header>
+<main id="productMain" class="pdp-shell">
+<nav class="breadcrumbs" aria-label="Ruta"><a href="/">Inicio</a><span>/</span><a href="/#destacados">Productos</a><span>/</span><span id="breadcrumbProduct">Detalle</span></nav>
+<div id="productStatus" role="status">Cargando producto…</div>
+<section id="productDetail" class="pdp-layout" hidden aria-label="Ficha de producto">
+<div class="pdp-gallery">
+<div class="pdp-main-photo"><img id="mainImage" alt="" src="" width="700" height="920"><div id="emptyImage" class="pdp-empty" hidden>Fotografía pendiente</div>
+<button type="button" id="previousPhoto" class="pdp-arrow prev" aria-label="Imagen anterior">‹</button>
+<button type="button" id="nextPhoto" class="pdp-arrow next" aria-label="Imagen siguiente">›</button>
+<div id="imageCounter" class="pdp-counter" aria-live="polite"></div></div>
+<div id="photoThumbnails" class="pdp-thumbnails" aria-label="Todas las imágenes"></div>
+</div>
+<div class="pdp-info">
+<div id="productCollection" class="pdp-overline"></div>
+<h1 id="productName"></h1><p id="productFacts" class="pdp-facts"></p><p id="productPrice" class="pdp-price"></p>
+<div class="pdp-divider"></div><p id="productDescription" class="pdp-description"></p>
+<div class="pdp-option"><label for="productColor">Color</label><select id="productColor"></select></div>
+<div class="pdp-option"><label for="productSize">Talle</label><select id="productSize"></select></div>
+<p id="availability" class="pdp-availability" aria-live="polite"></p>
+<button id="addToCart" type="button" class="pdp-add" disabled>Agregar a la bolsa</button>
+<a class="pdp-checkout" href="/?carrito=1">Ver mi bolsa</a>
+<p id="actionMessage" class="pdp-action-message" role="status" aria-live="polite"></p>
+<div class="pdp-detail-note"><strong>Sobre esta prenda</strong><p id="productMeta"></p></div>
+</div></section>
+</main>
+<footer class="pdp-footer">InYou · Prendas que hablan por vos.</footer>
+</body></html>
