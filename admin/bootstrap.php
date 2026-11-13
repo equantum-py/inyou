@@ -154,6 +154,6 @@ function adminSidebar(string $active=''):void{
 if(!empty($_SESSION['admin_id'])){
     $menuJson=json_encode(adminMenuItems(),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
     register_shutdown_function(static function() use ($menuJson):void{
-        echo '<script>(function(){const nav=document.querySelector(".sidebar nav");if(!nav)return;const items='.$menuJson.';const path=location.pathname.replace(/\/$/,"")||"/admin";nav.replaceChildren();for(const item of items){const a=document.createElement("a");a.href=item.href;a.textContent=item.label;const target=item.href.replace(/\/$/,"")||"/admin";let active=path===target;if((path==="/admin/variants.php"||path==="/admin/images.php")&&target==="/admin/products.php")active=true;if(active)a.className="selected";nav.appendChild(a);}})();</script>';
+        echo '<script>(function(){const nav=document.querySelector(".sidebar nav");if(!nav)return;const items='.$menuJson.';const path=location.pathname.replace(/\/$/,"")||"/admin";nav.replaceChildren();for(const item of items){const a=document.createElement("a");a.href=item.href;a.textContent=item.label;const target=item.href.replace(/\/$/,"")||"/admin";let active=path===target;if((path==="/admin/variants.php"||path==="/admin/images.php")&&target==="/admin/products.php")active=true;if(active)a.className="selected";nav.appendChild(a);}})();</script><script defer src="/admin/mobile.js?v=1"></script>';
     });
 }
