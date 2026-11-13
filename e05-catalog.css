@@ -10,3 +10,12 @@
 .mobile-menu-head .menu-brand img{display:block;object-fit:contain}
 @media(max-width:900px){.site-header .wordmark{justify-self:center;gap:5px}.site-header .brand-isotype{width:36px;height:36px}.site-header .brand-name{font-size:21px}.footer .brand-isotype{width:45px;height:45px}}
 @media(max-width:430px){.site-header .brand-isotype{width:34px;height:34px}.site-header .brand-name{font-size:19px}}
+
+/* InYou: navegación entre fotografías en tarjeta y acceso directo a la PDP. */
+.product-image .gallery-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:36px;height:36px;border:0;border-radius:50%;background:rgba(255,255,255,.92);color:#282421;font-size:28px;line-height:1;display:grid;place-items:center;box-shadow:0 2px 8px #0002;cursor:pointer}
+.product-image .gallery-prev{left:9px}.product-image .gallery-next{right:9px}
+.product-image .gallery-count{position:absolute;bottom:10px;right:10px;z-index:4;border-radius:20px;padding:6px 10px;color:#222;background:#fffE;font-size:11px}
+.product-detail-link{color:inherit;text-decoration:none}.product-detail-link:hover,.product-detail-link:focus-visible{text-decoration:underline;text-underline-offset:3px}
+.product-view-detail{display:inline-flex;align-items:center;min-height:34px;margin-top:8px;color:#70081e;font-weight:700;font-size:12px;text-decoration:underline;text-underline-offset:3px}
+.product-image button:focus-visible,.product-detail-link:focus-visible,.product-view-detail:focus-visible{outline:3px solid #70081e;outline-offset:3px}
+@media(max-width:520px){.product-image .gallery-nav{width:30px;height:30px;font-size:22px}.product-image .gallery-prev{left:5px}.product-image .gallery-next{right:5px}.product-image .gallery-count{font-size:10px;padding:4px 7px}.product-view-detail{font-size:11px;line-height:1.25}}
