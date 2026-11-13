@@ -78,6 +78,7 @@ function productCard(product,{favoriteOnly=false}={}){
   const range=productPriceRange(product);const price=node('div','product-price',range.min===range.max?money(range.min):`Desde ${money(range.min)}`);
   const info=node('div','product-info');
   const detailUrl='/product.html?id='+encodeURIComponent(product.id);
+  const imageDetailLink=node('a','product-image-detail-link');imageDetailLink.href=detailUrl;imageDetailLink.setAttribute('aria-label','Ver detalles y fotos de '+product.name);art.append(imageDetailLink);
   const productLink=node('a','product-detail-link',product.name);productLink.href=detailUrl;productLink.setAttribute('aria-label',`Ver detalles de ${product.name}`);
   const title=node('h3','product-title');title.append(productLink);
   info.append(title,node('div','product-facts',facts),price);
