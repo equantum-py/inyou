@@ -66,11 +66,16 @@ try {
          ORDER BY pv.sort_order ASC, pv.id ASC"
     );
 
+    // Las nuevas imágenes se sirven desde almacenamiento MySQL persistente.
+    // Conservamos compatibilidad con archivos anteriores que todavía existan.
+    $imageHasBlobs=(bool)$pdo->query("SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='product_image_blobs'")->fetchColumn();
     $imageStmt = $pdo->prepare(
-        "SELECT file_path, alt_text
-         FROM product_images
-         WHERE product_id = ?
-         ORDER BY is_primary DESC, sort_order ASC, id ASC"
+        $imageHasBlobs
+        ? "SELECT pi.id,pi.file_path,pi.alt_text,IF(pb.image_id IS NULL,0,1) stored_in_db
+           FROM product_images pi LEFT JOIN product_image_blobs pb ON pb.image_id=pi.id
+           WHERE pi.product_id=? ORDER BY pi.is_primary DESC,pi.sort_order ASC,pi.id ASC"
+        : "SELECT id,file_path,alt_text,0 stored_in_db FROM product_images
+           WHERE product_id=? ORDER BY is_primary DESC,sort_order ASC,id ASC"
     );
 
     $payload = [];
@@ -130,11 +135,16 @@ try {
         $images = [];
         foreach ($imageStmt->fetchAll() as $imageRow) {
             $imagePath = trim((string)$imageRow['file_path']);
-            if (!validImagePath($imagePath)) {
-                continue;
+            if (!validImagePath($imagePath)) continue;
+            if (!empty($imageRow['stored_in_db'])) {
+                $src='api/v1/product-image.php?id='.(int)$imageRow['id'];
+            } else {
+                // No anunciar URLs rotas de cargas antiguas perdidas en Vercel.
+                $src=is_file(dirname(__DIR__,2).'/'.$imagePath)?$imagePath:'';
             }
+            if ($src==='') continue;
             $images[] = [
-                'src' => $imagePath,
+                'src' => $src,
                 'alt' => mb_substr((string)($imageRow['alt_text'] ?? ''), 0, 255),
             ];
         }
