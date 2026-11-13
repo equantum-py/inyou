@@ -7,7 +7,7 @@ export const money = (guaranies) => `G. ${Number(guaranies).toLocaleString('es-P
 const IMAGE_RE = /^assets\/products\/[a-zA-Z0-9._/-]+\.(jpg|jpeg|png|webp)$/i;
 
 function validImagePath(value) {
-  return typeof value === 'string' && !value.includes('..') && (IMAGE_RE.test(value) || /^api\/v1\/product-image\.php\?id=[1-9][0-9]*$/.test(value));
+  return typeof value === 'string' && !value.includes('..') && (IMAGE_RE.test(value) || /^api\/v1\/product-image\.php\?id=[1-9][0-9]*$/.test(value) || /^https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/inyou-products\/products\/p[0-9]+-[a-f0-9]{32}\.(jpg|png|webp)$/.test(value));
 }
 
 export function normalizeCatalog(payload) {
