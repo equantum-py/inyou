@@ -12,7 +12,25 @@ try{
   if(!validCsrf()){http_response_code(403);throw new RuntimeException('La sesión venció. Recargá la página.');}
   $action=(string)($_POST['action']??'');$id=filter_var($_POST['id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
   if($action==='upload'){
-   if(!isset($_FILES['image'])||!is_array($_FILES['image'])||($_FILES['image']['error']??UPLOAD_ERR_NO_FILE)!==UPLOAD_ERR_OK)throw new RuntimeException('Seleccioná una imagen válida.');
+   if(!isset($_FILES['image'])||!is_array($_FILES['image'])){
+    $contentLength=(int)($_SERVER['CONTENT_LENGTH']??0);
+    $postLimit=ini_get('post_max_size');
+    throw new RuntimeException($contentLength>0&&empty($_POST)?'La imagen no llegó al servidor. El archivo puede superar el límite de carga de PHP ('.($postLimit?:'desconocido').').':'Primero seleccioná una fotografía JPG, PNG o WEBP.');
+   }
+   $uploadCode=(int)($_FILES['image']['error']??UPLOAD_ERR_NO_FILE);
+   if($uploadCode!==UPLOAD_ERR_OK){
+    $uploadMessages=[
+     UPLOAD_ERR_INI_SIZE=>'La fotografía supera el límite de carga configurado en el servidor.',
+     UPLOAD_ERR_FORM_SIZE=>'La fotografía supera el tamaño máximo permitido por el formulario.',
+     UPLOAD_ERR_PARTIAL=>'La fotografía se cargó parcialmente. Comprobá tu conexión e intentá nuevamente.',
+     UPLOAD_ERR_NO_FILE=>'No se seleccionó ninguna fotografía. Elegí un archivo antes de subir.',
+     UPLOAD_ERR_NO_TMP_DIR=>'El servidor no dispone de espacio temporal para recibir la fotografía.',
+     UPLOAD_ERR_CANT_WRITE=>'El servidor no pudo guardar temporalmente la fotografía.',
+     UPLOAD_ERR_EXTENSION=>'Una extensión de PHP bloqueó la carga de la fotografía.'
+    ];
+    error_log('InYou image upload rejected by PHP, code='.$uploadCode.'; upload_max_filesize='.ini_get('upload_max_filesize').'; post_max_size='.ini_get('post_max_size'));
+    throw new RuntimeException($uploadMessages[$uploadCode]??'No se pudo recibir la fotografía (código '.$uploadCode.').');
+   }
    $file=$_FILES['image'];if((int)$file['size']<=0||(int)$file['size']>INYOU_STORAGE_MAX_BYTES)throw new RuntimeException('La imagen debe pesar entre 1 byte y 10 MB.');
    $tmp=(string)$file['tmp_name'];$finfo=new finfo(FILEINFO_MIME_TYPE);$mime=$finfo->file($tmp);$allowed=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp'];if(!isset($allowed[$mime]))throw new RuntimeException('Formato no permitido. Usá JPG, PNG o WEBP.');
    $dimensions=@getimagesize($tmp);if(!$dimensions||$dimensions[0]<1||$dimensions[1]<1||((int)$dimensions[0]*(int)$dimensions[1])>25000000)throw new RuntimeException('Dimensiones de imagen inválidas o superiores a 25 megapíxeles.');
