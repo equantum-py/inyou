@@ -40,7 +40,6 @@ function inyouStorageRequest(string $method, string $path, ?string $payload = nu
     $url = inyouStorageUrl().'/storage/v1/object/'.INYOU_STORAGE_BUCKET.'/'.substr($path, strlen('supabase/'));
     $headers = [
         'apikey: '.$secret,
-        'Authorization: Bearer '.$secret,
         'Accept: application/json',
         'x-upsert: false'
     ];
@@ -73,7 +72,7 @@ function inyouStorageUpload(string $path,string $bytes,string $mime): void {
     }
     [$status,$body]=inyouStorageRequest('POST',$path,$bytes,$mime);
     if ($status!==200 && $status!==201) {
-        error_log('InYou Supabase upload status '.$status.' body '.substr($body,0,300));
+        error_log('InYou Supabase upload HTTP '.$status);
         throw new RuntimeException('Supabase no aceptó la fotografía (HTTP '.$status.'). Revisá Storage y las variables de Vercel.');
     }
 }
@@ -81,7 +80,7 @@ function inyouStorageUpload(string $path,string $bytes,string $mime): void {
 function inyouStorageDelete(string $path): void {
     [$status,$body]=inyouStorageRequest('DELETE',$path);
     if ($status!==200 && $status!==204 && $status!==404) {
-        error_log('InYou Supabase delete status '.$status.' body '.substr($body,0,300));
+        error_log('InYou Supabase delete HTTP '.$status);
         throw new RuntimeException('No se pudo eliminar la fotografía de Supabase.');
     }
 }
