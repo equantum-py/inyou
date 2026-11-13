@@ -6,7 +6,13 @@ if [[ "$MODE" != "--dry-run" && "$MODE" != "--apply" ]]; then
   echo "Uso: bash scripts/cleanup-vcr.sh --dry-run | --apply"; exit 2
 fi
 echo "InYou · limpieza VCR · $MODE"
-OUTPUT="$(npx --yes vercel@65.15.0 vcr image ls dockerfile --project inyou --scope equantum-pys-projects)"
+OUTPUT="$(npx --yes vercel@65.15.0 vcr image ls dockerfile --project inyou --scope equantum-pys-projects 2>&1)"
+# Vercel CLI envía la tabla a stderr: sin 2>&1 se ve en pantalla pero OUTPUT queda vacío.
+if ! printf '%s\n' "$OUTPUT" | grep -Eq '^[[:space:]]*image_[A-Za-z0-9]+[[:space:]]'; then
+  echo "No pude leer los identificadores del registro. No se borrará nada." >&2
+  printf '%s\n' "$OUTPUT" >&2
+  exit 1
+fi
 mapfile -t CANDIDATES < <(
   printf '%s\n' "$OUTPUT" | awk '
     /^[[:space:]]*image_[A-Za-z0-9]+[[:space:]]/ {
@@ -18,7 +24,7 @@ mapfile -t CANDIDATES < <(
     }' | sort -k3,3nr | head -n 8
 )
 if (( ${#CANDIDATES[@]} == 0 )); then
-  echo "No hay imágenes antiguas elegibles. Nada que borrar."
+  echo "No hay imágenes con 14 días o más. No se borra nada."
   exit 0
 fi
 echo "Candidatas creadas hace 14 días o más (máximo 8):"
