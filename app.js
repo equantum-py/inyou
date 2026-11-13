@@ -3,7 +3,15 @@ import {normalizeCatalog,cleanCart,updateQuantity,cartLines,cartTotal,money,what
 const qs=(sel)=>document.querySelector(sel);
 const qsa=(sel)=>Array.from(document.querySelectorAll(sel));
 const node=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;};
-const demo=new URLSearchParams(location.search).get('demo')==='1';
+const params=new URLSearchParams(location.search);
+const demo=params.get('vista')==='1'||params.get('demo')==='1';
+// Fotografías de referencia únicamente para la vista de colección, no asociadas a SKUs reales.
+const samplePhotos={
+  'muestra-aura-borgona':'https://images.unsplash.com/photo-1780566759977-ff8b5d53731c?auto=format&fit=crop&q=82&w=800',
+  'muestra-urbana-grafito':'https://images.unsplash.com/photo-1626543772115-ebd0bb39c6e1?auto=format&fit=crop&q=82&w=800',
+  'muestra-esencial-cielo':'https://images.unsplash.com/photo-1764069414718-e2209c869438?auto=format&fit=crop&q=82&w=800',
+  'muestra-libertad-crema':'https://images.unsplash.com/photo-1615761211305-016cf1a1c1a6?auto=format&fit=crop&q=82&w=800'
+};
 let catalog=[];
 let cart=[];
 let favorites=[];
@@ -44,8 +52,10 @@ function variantLabels(product){
 function productCard(product,{favoriteOnly=false}={}){
   const card=node('article',favoriteOnly?'favorite-card product-card':'product-card');
   const art=node('div','product-image');
-  if(product.image){
-    const image=node('img');image.src=product.image;image.alt=product.images?.find(img=>img.src===product.image)?.alt||`Fotografía de ${product.name}`;image.loading='lazy';image.decoding='async';image.addEventListener('error',()=>{image.remove();art.append(illustration())});art.append(image);
+  const illustrativePhoto=demo?samplePhotos[product.id]:null;
+  if(product.image||illustrativePhoto){
+    const image=node('img');image.src=illustrativePhoto||product.image;image.alt=illustrativePhoto?`Fotografía referencial para ${product.name}`:product.images?.find(img=>img.src===product.image)?.alt||`Fotografía de ${product.name}`;image.loading='lazy';image.decoding='async';image.addEventListener('error',()=>{image.remove();art.append(illustration())});art.append(image);
+    if(illustrativePhoto)art.append(node('span','product-tag sample-photo-label','Imagen referencial'));
   }else art.append(illustration());
   if(product.collection)art.append(node('span','product-tag',product.collection));
   const fav=node('button',`favorite-btn${isFavorite(product)?' active':''}`,isFavorite(product)?'♥':'♡');fav.type='button';fav.setAttribute('aria-label',isFavorite(product)?`Quitar ${product.name} de favoritos`:`Guardar ${product.name} en favoritos`);fav.addEventListener('click',(e)=>{e.stopPropagation();toggleFavorite(product)});art.append(fav);
@@ -103,7 +113,7 @@ function closeCart(){const drawer=qs('#cartDrawer');if(!drawer)return;drawer.cla
 function openCart(){lastFocus=document.activeElement;renderCart();const drawer=qs('#cartDrawer');drawer.inert=false;drawer.classList.add('open');drawer.setAttribute('aria-hidden','false');qs('#backdrop').hidden=false;document.body.style.overflow='hidden';qs('#closeCart')?.focus()}
 function renderCart(){const items=qs('#cartItems');if(!items)return;items.replaceChildren();const lines=cartLines(cart,catalog);const count=lines.reduce((n,l)=>n+l.qty,0);qs('#cartCount').textContent=count;qs('#cartSubtotal').textContent=money(cartTotal(cart,catalog));if(!lines.length)items.append(node('p','cart-empty','Tu carrito está vacío.'));
   for(const l of lines){const line=node('div','cart-line');const detail=node('div');detail.append(node('h4','',l.product.name),node('p','',`${l.variant.size} · ${l.variant.color}`),node('strong','',money(l.subtotal)));const qty=node('div','qty-controls');const minus=node('button','','−');const plus=node('button','','+');minus.addEventListener('click',()=>changeQty(l.sku,l.qty-1));plus.addEventListener('click',()=>changeQty(l.sku,l.qty+1));qty.append(minus,node('span','',String(l.qty)),plus);line.append(detail,qty);items.append(line)}
-  const enabled=!demo&&Boolean(config.storeReady&&config.whatsappEnabled&&/^\d{10,15}$/.test(config.whatsappPhone))&&lines.length>0;qs('#checkout').disabled=!enabled;qs('#checkoutReason').textContent=demo?'Modo demostración.':!config.storeReady?'La tienda todavía no está habilitada para ventas.':!config.whatsappEnabled?'WhatsApp pendiente de configuración.':!lines.length?'Agregá un producto para comenzar.':'';
+  const enabled=!demo&&Boolean(config.storeReady&&config.whatsappEnabled&&/^\d{10,15}$/.test(config.whatsappPhone))&&lines.length>0;qs('#checkout').disabled=!enabled;qs('#checkoutReason').textContent=demo?'Vista de colección: compras no habilitadas.':!config.storeReady?'La tienda todavía no está habilitada para ventas.':!config.whatsappEnabled?'WhatsApp pendiente de configuración.':!lines.length?'Agregá un producto para comenzar.':'';
 }
 function changeQty(sku,n){try{cart=updateQuantity(cart,sku,n,catalog);writeCart();renderCart()}catch(e){toast(e.message)}}
 function handleCheckout(){if(demo||!config.storeReady||!config.whatsappEnabled){toast('La tienda todavía no está habilitada para ventas.');return}try{window.open(whatsappUrl(config.whatsappPhone,whatsappMessage(cart,catalog)),'_blank','noopener,noreferrer')}catch(e){toast(e.message)}}
@@ -121,7 +131,7 @@ function searchProducts(term){const q=normalizeText(term).trim();if(!q)return[];
 function renderSearch(term){const box=qs('#searchSuggestions');if(!box)return;const items=searchProducts(term);box.replaceChildren();if(!term.trim()){box.append(node('p','','Probá buscar “remera”, “floral”, “mujer” o “kepi”.'));return}if(!items.length){box.append(node('p','','No encontramos productos con esa búsqueda.'));return}for(const p of items){const row=node('button','search-result');row.type='button';let thumb;if(p.image){thumb=node('img');thumb.src=p.image;thumb.alt=''}else thumb=node('div','product-placeholder','');const text=node('div');text.append(node('strong','',p.name),node('div','product-facts',[p.collection,p.para].filter(Boolean).join(' · ')));const range=productPriceRange(p);row.append(thumb,text,node('span','',range.min===range.max?money(range.min):`Desde ${money(range.min)}`));row.addEventListener('click',()=>{activeFilter=p.collection||'Todas';activeType=p.tipo||'Todos';activeAudience=p.para||'Todos';closeSearch();renderCatalog();scrollToProducts()});box.append(row)}}
 
 async function load(){
-  qs('#year').textContent=new Date().getFullYear();favorites=readFavorites();renderFavoriteCount();if(demo){qs('#demoBanner').hidden=false;qs('#notice').textContent='VISTA DEMO · No es un catálogo real · Sin ventas habilitadas'}
+  qs('#year').textContent=new Date().getFullYear();favorites=readFavorites();renderFavoriteCount();if(demo){qs('#demoBanner').hidden=false;qs('#notice').textContent='VISTA DE COLECCIÓN · Artículos ilustrativos · Sin ventas habilitadas'}
   try{const catalogUrl=demo?'./data/catalog.demo.json':'./api/v1/products.php';const configUrl=demo?'./data/config.json':'./api/v1/config.php';const [configRes,catalogRes]=await Promise.all([fetch(configUrl,{cache:'no-store',headers:{Accept:'application/json'}}),fetch(catalogUrl,{cache:'no-store',headers:{Accept:'application/json'}})]);if(!configRes.ok)throw new Error('No fue posible leer la configuración.');if(!catalogRes.ok)throw new Error('No fue posible cargar el catálogo.');config=await configRes.json();catalog=normalizeCatalog(await catalogRes.json());cart=cleanCart(readCart(),catalog);writeCart()}catch(e){console.error(e);toast('No se pudo cargar el catálogo.');catalog=[];cart=[]}
   populateVariantFilters();renderCatalog();renderCart();renderFavorites();
 }
