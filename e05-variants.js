@@ -1,5 +1,5 @@
 const COLOR_MAP={
-  blanco:'#ffffff',white:'#ffffff',negro:'#111111',black:'#111111',rojo:'#d9232e',red:'#d9232e',azul:'#2d5fb8',blue:'#2d5fb8',verde:'#4f7d57',green:'#4f7d57',beige:'#d9c7aa',crema:'#efe4cf',gris:'#888b8d',gray:'#888b8d',grey:'#888b8d',rosa:'#e7a2b4',pink:'#e7a2b4',naranja:'#f58a33',orange:'#f58a33',amarillo:'#e6c53f',yellow:'#e6c53f',marron:'#76513e',marrón:'#76513e',brown:'#76513e',violeta:'#7654a8',morado:'#7654a8',lila:'#b59ac8'
+  bordo:'#70081E',bordó:'#70081E',blanco:'#ffffff',white:'#ffffff',negro:'#111111',black:'#111111',rojo:'#d9232e',red:'#d9232e',azul:'#2d5fb8',blue:'#2d5fb8',verde:'#4f7d57',green:'#4f7d57',beige:'#d9c7aa',crema:'#efe4cf',gris:'#888b8d',gray:'#888b8d',grey:'#888b8d',rosa:'#e7a2b4',pink:'#e7a2b4',naranja:'#f58a33',orange:'#f58a33',amarillo:'#e6c53f',yellow:'#e6c53f',marron:'#76513e',marrón:'#76513e',brown:'#76513e',violeta:'#7654a8',morado:'#7654a8',lila:'#b59ac8'
 };
 
 const norm=(value)=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
