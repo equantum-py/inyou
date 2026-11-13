@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__, 2) . '/lib/database.php';
+require_once dirname(__DIR__, 2) . '/lib/inyou-storage.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, max-age=0');
@@ -16,7 +17,8 @@ if (!in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['GET', 'HEAD'], true)) {
 
 function validImagePath(string $path): bool
 {
-    return $path !== ''
+    return inyouStorageIsPath($path)
+        || ($path !== ''
         && !str_contains($path, '..')
         && (bool)preg_match('#^assets/products/[a-zA-Z0-9._/-]+\.(jpg|jpeg|png|webp)$#i', $path);
 }
@@ -136,7 +138,9 @@ try {
         foreach ($imageStmt->fetchAll() as $imageRow) {
             $imagePath = trim((string)$imageRow['file_path']);
             if (!validImagePath($imagePath)) continue;
-            if (!empty($imageRow['stored_in_db'])) {
+            if (inyouStorageIsPath($imagePath)) {
+                $src=inyouStoragePublicUrl($imagePath);
+            } elseif (!empty($imageRow['stored_in_db'])) {
                 $src='api/v1/product-image.php?id='.(int)$imageRow['id'];
             } else {
                 // No anunciar URLs rotas de cargas antiguas perdidas en Vercel.
