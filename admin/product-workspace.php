@@ -50,6 +50,23 @@ try{
    $save=$pdo->prepare('UPDATE product_variants SET stock_qty=?,price_override=?,is_active=? WHERE id=? AND product_id=?');
    foreach($updates as [$variantId,$stock,$price,$active])$save->execute([$stock,$price,$active,$variantId,$id]);
    $pdo->commit();auditLog($pdo,'variant.bulk_update','product',$id);
+  }elseif($action==='publish'){
+   $newStatus=(string)($_POST['status']??'');
+   if(!in_array($newStatus,['draft','active'],true))throw new RuntimeException('Estado de publicación no válido.');
+   if($newStatus==='active'){
+    $ready=$pdo->prepare("SELECT p.base_price,
+      (SELECT COUNT(*) FROM product_collections pc JOIN collections c ON c.id=pc.collection_id WHERE pc.product_id=p.id AND c.is_active=1) AS collections_ok,
+      (SELECT COUNT(*) FROM product_variants v WHERE v.product_id=p.id AND v.is_active=1 AND (v.availability_mode='bajo_pedido' OR v.stock_qty>0)) AS variants_ok,
+      (SELECT COUNT(*) FROM product_images i WHERE i.product_id=p.id AND i.file_path LIKE 'supabase/products/%') AS images_ok
+      FROM products p WHERE p.id=?");
+    $ready->execute([$id]);$checks=$ready->fetch();
+    if(!$checks||(int)$checks['base_price']<=0)throw new RuntimeException('Antes de publicar, cargá un precio válido.');
+    if(!(int)$checks['collections_ok'])throw new RuntimeException('Antes de publicar, seleccioná una colección activa.');
+    if(!(int)$checks['variants_ok'])throw new RuntimeException('Antes de publicar, activá al menos un talle/color con stock o bajo pedido.');
+    if(!(int)$checks['images_ok'])throw new RuntimeException('Antes de publicar, subí una fotografía.');
+   }
+   $pdo->prepare('UPDATE products SET status=? WHERE id=?')->execute([$newStatus,$id]);
+   auditLog($pdo,'product.status.'.$newStatus,'product',$id);
   }elseif($action==='photo'){
    if(!isset($_FILES['image'])||!is_array($_FILES['image']))throw new RuntimeException('Elegí una fotografía antes de subir.');
    $file=$_FILES['image'];$uploadCode=(int)($file['error']??UPLOAD_ERR_NO_FILE);
@@ -102,6 +119,9 @@ try{
 }
 $hasPhoto=false;foreach($photos as $p){if(inyouStorageIsPath((string)$p['file_path'])){$hasPhoto=true;break;}}
 $available=0;foreach($variants as $v){if($v['is_active']&&($v['availability_mode']==='bajo_pedido'||(int)$v['stock_qty']>0))$available++;}
+$hasCollection=false;foreach($collections as $c){if((int)$c['id']===(int)($product['collection_id']??0)){$hasCollection=true;break;}}
+$readyToPublish=$hasPhoto&&$available>0&&$hasCollection&&(int)($product['base_price']??0)>0;
+
 ?>
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Editar <?=h($product['name']??'producto')?> · InYou</title><link rel="stylesheet" href="/admin/style.css">
 <style>
@@ -120,5 +140,16 @@ $available=0;foreach($variants as $v){if($v['is_active']&&($v['availability_mode
 <?php if($canEdit):?><div class="separator"></div><form method="post" enctype="multipart/form-data"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="product_id" value="<?=$id?>"><input type="hidden" name="action" value="photo"><div class="upload-row"><div><label class="caption" for="newphoto">Agregar fotografía (JPG, PNG o WEBP · máx. 10 MB)</label><input id="newphoto" type="file" name="image" accept="image/jpeg,image/png,image/webp" required></div><button class="btn">+ Subir fotografía</button></div><label style="display:inline-block;margin-top:12px;font-size:13px"><input type="checkbox" name="primary" value="1"> Usar como foto principal</label></form><?php endif;?><p class="advanced">¿Querés reordenar o eliminar fotos? <a href="/admin/images.php?product=<?=$id?>">Abrir opciones avanzadas de fotos</a>.</p></section>
 <section class="block" id="talles"><div class="section-head"><div><h2>3. Talles, colores y stock</h2><p class="hint">Las combinaciones ya están creadas. Activá las que quieras vender y completá su stock.</p></div><span class="flag"><?=count($variants)?> variantes</span></div>
 <?php if($variants):?><form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="product_id" value="<?=$id?>"><input type="hidden" name="action" value="variants"><div style="overflow-x:auto"><table class="variant-table"><thead><tr><th>Prenda</th><th>Stock</th><th>Precio especial G.</th><th>Disponible</th></tr></thead><tbody><?php foreach($variants as $v):?><tr><td><span class="v-name"><?=h($v['color_name'])?> · <?=h($v['size_label'])?></span><span class="v-sku"><?=h($v['sku'])?></span></td><td><input type="number" min="0" max="99999999" name="variants[<?=(int)$v['id']?>][stock]" value="<?=(int)$v['stock_qty']?>" aria-label="Stock <?=h($v['color_name'].' '.$v['size_label'])?>" <?=$canEdit?'':'disabled'?>></td><td><input type="number" min="1" name="variants[<?=(int)$v['id']?>][price]" value="<?=h((string)($v['price_override']??''))?>" placeholder="Base" aria-label="Precio especial <?=h($v['color_name'].' '.$v['size_label'])?>" <?=$canEdit?'':'disabled'?>></td><td><input type="checkbox" name="variants[<?=(int)$v['id']?>][active]" value="1" <?=!empty($v['is_active'])?'checked':''?> aria-label="Activar <?=h($v['color_name'].' '.$v['size_label'])?>" <?=$canEdit?'':'disabled'?>></td></tr><?php endforeach;?></tbody></table></div><?php if($canEdit):?><div class="savebar"><button class="btn">Guardar talles y stock</button><span class="hint">No publica el producto automáticamente.</span></div><?php endif;?></form><?php else:?><p>Todavía no hay talles. <a href="/admin/variants.php?product=<?=$id?>">Crear primera variante</a>.</p><?php endif;?><p class="advanced" style="margin-top:18px">¿Necesitás agregar otra talla, color o SKU? <a href="/admin/variants.php?product=<?=$id?>">Configuración avanzada de variantes</a>.</p></section>
-<section class="block" style="background:#f9f7f4"><div class="section-head"><div><h2>Publicación</h2><p class="hint">Se mantiene separada por seguridad: revisá fotos, precio y stock antes de publicar.</p></div><a class="btn light" href="/admin/products.php">Ver estado en listado</a></div></section>
+<section class="block" id="publicar" style="background:#f9f7f4"><div class="section-head"><div><h2>4. Publicación</h2><p class="hint">Publicá la prenda desde aquí, sin volver al listado.</p></div><span class="flag <?=($product['status']==='active')?'good':''?>"><?=($product['status']==='active')?'Visible en la tienda':'No visible en la tienda'?></span></div>
+<?php if($product['status']!=='active'&&!$readyToPublish):?><p class="hint">Para publicar falta completar:</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0">
+<?php if((int)$product['base_price']<=0):?><a class="btn light small" href="#datos">Agregar precio</a><?php endif;?>
+<?php if(!$hasCollection):?><a class="btn light small" href="#datos">Elegir colección</a><?php endif;?>
+<?php if(!$hasPhoto):?><a class="btn light small" href="#fotos">Subir fotografía</a><?php endif;?>
+<?php if(!$available):?><a class="btn light small" href="#talles">Activar talle con stock</a><?php endif;?>
+</div><?php endif;?>
+<?php if($canEdit):?><form method="post" style="margin-top:16px"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="product_id" value="<?=$id?>"><input type="hidden" name="action" value="publish">
+<?php if($product['status']==='active'):?><input type="hidden" name="status" value="draft"><button class="btn light" type="submit">Retirar de la tienda</button>
+<?php else:?><input type="hidden" name="status" value="active"><button class="btn" type="submit" <?=$readyToPublish?'':'disabled'?> style="<?=$readyToPublish?'':'opacity:.45;cursor:not-allowed'?>">Publicar producto en la tienda</button>
+<?php endif;?></form><?php endif;?>
+</section>
 </div></main></body></html>
