@@ -239,3 +239,151 @@ body.dashboard.fashion-admin,body.dashboard:has(.workspace),body.dashboard:has(.
 .dashboard .workspace .status-toolbar{border:1px solid #e8dfda;box-shadow:var(--fashion-shadow)}
 .dashboard .workspace .flag.good{background:#e7f4ec;color:#287051}
 @media(max-width:700px){.dashboard .workspace .quick-nav{top:0;margin-inline:-4px;padding:10px 4px;gap:6px}.dashboard .workspace .quick-nav a{padding:10px 13px;font-size:12px}.dashboard .workspace section.block{padding:18px 15px;border-radius:16px;scroll-margin-top:82px}.dashboard .workspace .photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.dashboard .workspace .photo img{height:180px}.dashboard .workspace .upload-row{padding:11px}.dashboard .workspace .variant-table tr:hover td{background:transparent}}
+
+/* INYOU RESPONSIVE V2 · 2026-11 · todas las pantallas del administrador */
+body.dashboard{min-width:0}
+body.dashboard .content{min-width:0}
+body.dashboard .content>*{min-width:0}
+body.dashboard .content img{max-width:100%}
+body.dashboard a,body.dashboard button,body.dashboard select{touch-action:manipulation}
+body.dashboard :is(a,button,input,select,textarea):focus-visible{outline:3px solid #9e5c6e;outline-offset:2px}
+.admin-mobile-top,.admin-menu-close{display:none}
+.admin-nav-overlay[hidden]{display:none!important}
+@media (min-width:1024px){
+ body.dashboard .sidebar{position:sticky;top:0;align-self:flex-start;flex:0 0 238px;height:100dvh;overflow-y:auto}
+ body.dashboard .content{flex:1 1 auto;width:calc(100% - 238px);max-width:none}
+ body.dashboard .studio-actions{grid-template-columns:repeat(4,minmax(0,1fr))}
+ body.dashboard .fashion-product-grid{grid-template-columns:repeat(auto-fill,minmax(215px,1fr))}
+}
+@media (min-width:768px) and (max-width:1023px){
+ body.dashboard .fashion-product-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+ body.dashboard .catalog-browser{padding:18px}
+ body.dashboard .studio-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body.dashboard .studio-split{grid-template-columns:1fr}
+ body.dashboard .cards,body.dashboard .fashion-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body.dashboard .content .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:1023px){
+ html,body{max-width:100%;overflow-x:clip}
+ body.dashboard{display:block;padding-top:63px;min-height:100dvh}
+ body.dashboard .admin-mobile-top{
+   position:fixed;display:flex;align-items:center;justify-content:space-between;gap:12px;
+   top:0;left:0;right:0;height:63px;z-index:120;padding:9px max(16px,env(safe-area-inset-left)) 9px max(16px,env(safe-area-inset-right));
+   background:#fff;border-bottom:1px solid #ebe2dc;box-shadow:0 2px 12px rgba(38,20,22,.04)
+ }
+ body.dashboard .admin-menu-toggle{border:1px solid #e9dfe0;background:#fff;color:#70081e;border-radius:10px;display:inline-flex;align-items:center;gap:7px;padding:9px 12px;min-height:43px;font-weight:700;font-size:13px}
+ body.dashboard .admin-menu-toggle span:first-child{font-size:18px}
+ body.dashboard .admin-mobile-title{font-family:Georgia,serif;font-size:25px;font-style:italic;font-weight:700;letter-spacing:-1.8px;color:#70081e;text-decoration:none}
+ body.dashboard .admin-mobile-quick{min-height:43px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;background:#70081e;color:#fff;border-radius:9px;padding:0 11px;font-size:12px;font-weight:700}
+ body.dashboard .sidebar{
+   position:fixed!important;top:0!important;left:0!important;bottom:0!important;width:min(310px,88vw)!important;
+   height:100dvh!important;min-height:0!important;overflow-y:auto!important;z-index:132!important;display:flex!important;
+   flex-direction:column!important;transform:translateX(-105%);transition:transform .23s ease;
+   padding:63px 15px 22px!important;background:#fff!important;
+   border-right:1px solid #e7ded9!important;box-shadow:8px 0 30px rgba(37,23,24,.1)!important;
+   visibility:hidden
+ }
+ body.dashboard.admin-nav-open .sidebar{transform:translateX(0);visibility:visible}
+ body.dashboard .sidebar .brand{margin:0;padding-left:13px}
+ body.dashboard .sidebar .eyebrow{padding-left:13px}
+ body.dashboard .sidebar nav{
+   display:grid!important;grid-template-columns:1fr!important;overflow:visible!important;
+   gap:5px!important;white-space:normal!important;margin:24px 0 0!important;padding:0!important;
+ }
+ body.dashboard .sidebar nav a{display:flex!important;justify-content:flex-start!important;white-space:normal!important;min-height:45px!important;padding:12px 15px!important;border:0!important;border-radius:10px!important;background:transparent!important;color:#615652!important;text-align:left}
+ body.dashboard .sidebar nav a.selected{background:#f7e9ed!important;color:#70081e!important;font-weight:800!important}
+ body.dashboard .sidebar .sidebar-bottom{display:block!important;margin-top:auto;padding:25px 13px 0}
+ body.dashboard .admin-menu-close{
+   position:absolute;display:grid;place-items:center;top:12px;right:12px;width:42px;height:42px;
+   background:#f8f3f1;border:1px solid #e9dfdc;color:#70081e;border-radius:10px;font-size:18px;cursor:pointer
+ }
+ body.dashboard .admin-nav-overlay:not([hidden]){display:block!important;position:fixed;inset:0;background:rgba(31,20,22,.5);z-index:130;border:0;padding:0;width:100%;height:100dvh;cursor:pointer}
+ body.dashboard.admin-nav-open{overflow:hidden}
+ body.dashboard .content{width:100%!important;max-width:none!important;padding:24px clamp(15px,3vw,35px) 76px!important}
+ body.dashboard .content header{margin-bottom:20px}
+ body.dashboard :is(.catalog-manager,.fashion-shell,.workspace,.wrap){width:100%;max-width:100%;min-width:0;margin-inline:auto}
+ body.dashboard .fashion-form-grid{max-width:100%}
+ body.dashboard .studio-draft{min-width:0}
+ body.dashboard .catalog-searchbar{max-width:100%}
+ body.dashboard .catalog-search-box{min-width:0}
+ body.dashboard .catalog-filter-tabs{max-width:100%;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+ body.dashboard .catalog-filter-tabs a{flex:0 0 auto;min-height:42px;white-space:nowrap}
+ body.dashboard .content .admin-topbar{flex-wrap:wrap}
+ body.dashboard .content .admin-topbar .admin-top-actions{margin-left:auto}
+ body.dashboard .workspace .workspace-top{display:flex;flex-wrap:wrap;gap:10px}
+ body.dashboard .workspace .quick-nav{max-width:100%;overflow-x:auto;scrollbar-width:none}
+ body.dashboard .workspace .quick-nav a{flex-shrink:0}
+}
+@media (max-width:767px){
+ body.dashboard .content{padding:16px 14px 92px!important}
+ body.dashboard .content header{gap:8px}
+ body.dashboard .fashion-page-top{display:flex;align-items:stretch}
+ body.dashboard .fashion-page-top .fashion-btn{width:100%}
+ body.dashboard .fashion-summary{grid-template-columns:1fr!important;gap:9px}
+ body.dashboard .fashion-summary .fashion-metric{padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+ body.dashboard .fashion-metric strong{font-size:25px;margin:0}
+ body.dashboard .fashion-metric small{width:100%}
+ body.dashboard .catalog-stat-strip{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ body.dashboard .catalog-stat-strip>div{min-width:0}
+ body.dashboard .catalog-browser{padding:13px}
+ body.dashboard .fashion-product-grid,body.dashboard .catalog-browser .fashion-product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ body.dashboard .fashion-product-card{min-width:0}
+ body.dashboard .fashion-card-photo{aspect-ratio:3/4}
+ body.dashboard .fashion-card-actions form{flex-direction:column;align-items:stretch}
+ body.dashboard .fashion-card-actions select,body.dashboard .fashion-card-actions button{width:100%;min-height:43px}
+ body.dashboard .fashion-form-grid,body.dashboard .studio-split{grid-template-columns:1fr!important}
+ body.dashboard .studio-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body.dashboard .studio-action{min-width:0;padding:13px;min-height:139px}
+ body.dashboard .content .toolbar{display:flex;flex-direction:column;align-items:stretch}
+ body.dashboard .content .toolbar :is(input,select,button){width:100%;min-width:0}
+ body.dashboard .content .grid{grid-template-columns:1fr!important}
+ body.dashboard .content section.panel,body.dashboard .content .panel{max-width:100%;padding:15px!important}
+ body.dashboard .content .photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ body.dashboard .workspace .upload-row{grid-template-columns:1fr}
+ body.dashboard .workspace .upload-row button{width:100%}
+ body.dashboard .workspace .status-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+ body.dashboard .workspace .status-actions form{min-width:0;width:100%}
+ body.dashboard .workspace .status-actions button{width:100%}
+ body.dashboard .workspace .savebar{justify-content:stretch}
+ body.dashboard .workspace .savebar button{flex:1}
+ body.dashboard .workspace .variant-table{display:block!important;width:100%!important;min-width:0!important}
+ body.dashboard .workspace .variant-table thead{display:none!important}
+ body.dashboard .workspace .variant-table tbody{display:grid!important;gap:10px}
+ body.dashboard .workspace .variant-table tr{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;background:#fff;border:1px solid #eadfdb;border-radius:12px;padding:12px}
+ body.dashboard .workspace .variant-table td{display:flex!important;flex-direction:column;gap:5px;width:100%!important;min-width:0;border:0!important;padding:3px!important}
+ body.dashboard .workspace .variant-table td:first-child{grid-column:1/-1;border-bottom:1px solid #f1e9e5!important;padding-bottom:8px!important}
+ body.dashboard .workspace .variant-table td:first-child::before{display:none!important}
+ body.dashboard .workspace .variant-table td:nth-child(3){display:flex!important}
+ body.dashboard .workspace .variant-table td:nth-child(4){align-items:flex-start;justify-content:center}
+ body.dashboard .workspace .variant-table td:not(:first-child)::before{content:attr(data-label);display:block;font-size:10px;font-weight:700;color:#756864}
+ body.dashboard .workspace .variant-table td input[type=number]{width:100%!important;min-width:0}
+ body.dashboard .workspace .variant-table td input[type=checkbox]{min-width:23px;min-height:23px}
+ body.dashboard .content table.admin-card-table:not(.variant-table){display:block!important;width:100%!important}
+ body.dashboard .content table.admin-card-table:not(.variant-table) thead{display:none!important}
+ body.dashboard .content table.admin-card-table:not(.variant-table) tbody{display:grid!important;gap:10px}
+ body.dashboard .content table.admin-card-table:not(.variant-table) tr{display:grid!important;grid-template-columns:1fr!important;min-width:0;background:white;border:1px solid #ebe2dc;border-radius:13px;padding:12px}
+ body.dashboard .content table.admin-card-table:not(.variant-table) td{display:flex!important;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:8px 2px!important;border:0!important;border-bottom:1px solid #f5eee9!important;min-width:0;overflow-wrap:anywhere}
+ body.dashboard .content table.admin-card-table:not(.variant-table) td::before{content:attr(data-label);flex:0 0 95px;display:block;font-size:10px;font-weight:700;color:#82736f}
+ body.dashboard .content table.admin-card-table:not(.variant-table) td.admin-card-title::before{display:none}
+ body.dashboard .content table.admin-card-table:not(.variant-table) td.admin-card-actions{display:block!important}
+ body.dashboard .content table.admin-card-table:not(.variant-table) td.admin-card-actions::before{margin-bottom:8px}
+ body.dashboard .content table.admin-card-table:not(.variant-table) td.admin-card-empty::before{display:none}
+ body.dashboard .content [style*="overflow:auto"]{max-width:100%;overflow-x:auto}
+ body.dashboard .content .wrap>.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.dashboard .content .card{min-width:0}
+ body.dashboard .content .card .body{min-width:0;overflow-wrap:anywhere}
+}
+@media (max-width:420px){
+ body.dashboard .admin-mobile-top{padding-inline:10px;gap:5px}
+ body.dashboard .admin-menu-toggle{padding:8px 9px}
+ body.dashboard .admin-mobile-title{font-size:23px}
+ body.dashboard .admin-mobile-quick{padding:0 8px}
+ body.dashboard .content{padding-inline:11px!important}
+ body.dashboard .studio-actions{grid-template-columns:1fr 1fr}
+ body.dashboard .studio-action{min-height:145px}
+ body.dashboard .fashion-product-grid,body.dashboard .catalog-browser .fashion-product-grid{grid-template-columns:1fr!important}
+ body.dashboard .fashion-card-photo{aspect-ratio:4/3}
+ body.dashboard .catalog-stat-strip{grid-template-columns:repeat(3,minmax(0,1fr))}
+ body.dashboard .catalog-stat-strip>div{padding:10px}
+}
+@media (prefers-reduced-motion:reduce){body.dashboard .sidebar{transition:none!important}}
