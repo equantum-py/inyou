@@ -121,6 +121,7 @@ function adminMenuItems():array{
     $items=[
         ['href'=>'/admin/','label'=>'Inicio'],
         ['href'=>'/admin/products.php','label'=>'Mis prendas'],
+        ['href'=>'/admin/products.php?estado=archived','label'=>'Archivados'],
         ['href'=>'/admin/collections.php','label'=>'Colecciones'],
         ['href'=>'/admin/inventory.php','label'=>'Stock y talles'],
         ['href'=>'/admin/media.php','label'=>'Fotografías'],
@@ -136,7 +137,8 @@ function adminSidebar(string $active=''):void{
     foreach(adminMenuItems() as $item){
         $isActive=false;
         if($active==='home'&&$item['href']==='/admin/')$isActive=true;
-        if($active==='products'&&$item['href']==='/admin/products.php')$isActive=true;
+        if($active==='products'&&$item['href']==='/admin/products.php'&&($_GET['estado']??'')!=='archived')$isActive=true;
+        if($active==='products'&&$item['href']==='/admin/products.php?estado=archived'&&($_GET['estado']??'')==='archived')$isActive=true;
         if($active==='collections'&&$item['href']==='/admin/collections.php')$isActive=true;
         if($active==='inventory'&&$item['href']==='/admin/inventory.php')$isActive=true;
         if($active==='media'&&$item['href']==='/admin/media.php')$isActive=true;
@@ -154,6 +156,6 @@ function adminSidebar(string $active=''):void{
 if(!empty($_SESSION['admin_id'])){
     $menuJson=json_encode(adminMenuItems(),JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
     register_shutdown_function(static function() use ($menuJson):void{
-        echo '<script>(function(){const nav=document.querySelector(".sidebar nav");if(!nav)return;const items='.$menuJson.';const path=location.pathname.replace(/\/$/,"")||"/admin";nav.replaceChildren();for(const item of items){const a=document.createElement("a");a.href=item.href;a.textContent=item.label;const target=item.href.replace(/\/$/,"")||"/admin";let active=path===target;if((path==="/admin/variants.php"||path==="/admin/images.php")&&target==="/admin/products.php")active=true;if(active)a.className="selected";nav.appendChild(a);}})();</script><script defer src="/admin/mobile.js?v=2"></script>';
+        echo '<script>(function(){const nav=document.querySelector(".sidebar nav");if(!nav)return;const items='.$menuJson.';const path=location.pathname.replace(/\/$/,"")||"/admin";nav.replaceChildren();for(const item of items){const a=document.createElement("a");a.href=item.href;a.textContent=item.label;const target=item.href.replace(/\/$/,"")||"/admin";let active=path===target;if(path==="/admin/products.php"){active=target===(new URLSearchParams(location.search).get("estado")==="archived"?"/admin/products.php?estado=archived":"/admin/products.php");}if((path==="/admin/variants.php"||path==="/admin/images.php"||path==="/admin/product-workspace.php")&&target==="/admin/products.php")active=true;if(active)a.className="selected";nav.appendChild(a);}})();</script><script defer src="/admin/mobile.js?v=2"></script>';
     });
 }
