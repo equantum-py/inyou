@@ -217,3 +217,25 @@ body.dashboard.fashion-admin,body.dashboard:has(.workspace),body.dashboard:has(.
  .fashion-create-panel{padding:16px;border-radius:15px}.fashion-form-grid{grid-template-columns:1fr}.fashion-field.full{grid-column:auto}.create-steps span{padding:8px 10px;font-size:10px}.fashion-form-footer{flex-direction:column-reverse}.fashion-form-footer>*{width:100%}.catalog-pagination{flex-wrap:wrap}
 }
 @media(max-width:380px){.fashion-product-grid{grid-template-columns:1fr 1fr}.fashion-card-content{padding:8px}.catalog-browser{padding:10px}}
+
+
+/* Workspace: edición de prendas rápida, visual y consistente */
+.dashboard .workspace{max-width:1250px}
+.dashboard .workspace .workspace-top{margin:8px 0 21px;align-items:center}
+.dashboard .workspace .workspace-top h1{font-family:Georgia,serif;font-weight:500;letter-spacing:-.04em}
+.dashboard .workspace .quick-nav{position:sticky;top:0;z-index:12;gap:8px;background:rgba(248,246,242,.97);padding:13px 5px;margin:8px -5px 16px;backdrop-filter:blur(12px);border-bottom:1px solid #eee7e1}
+.dashboard .workspace .quick-nav a{border:1px solid #e9e1dc;background:#fff;border-radius:100px;color:#645953;padding:11px 15px}
+.dashboard .workspace .quick-nav a:hover,.dashboard .workspace .quick-nav a:focus-visible{color:#70081e;border-color:#c6a3aa}
+.dashboard .workspace section.block{border:1px solid #ebe5e0;border-radius:20px;padding:27px 30px;box-shadow:var(--fashion-shadow);margin:17px 0;scroll-margin-top:83px}
+.dashboard .workspace section.block h2{font-size:22px;font-weight:700}
+.dashboard .workspace .photo-grid{grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px}
+.dashboard .workspace .photo{background:#faf8f5;border:1px solid #efe7e2;border-radius:14px;padding:9px}
+.dashboard .workspace .photo img{height:195px;object-fit:cover;border-radius:10px}
+.dashboard .workspace .upload-row{background:#faf7f5;border:1px dashed #dbc9c2;padding:15px;border-radius:12px;align-items:center}
+.dashboard .workspace .variant-table th{font-size:10px;color:#8d827b}
+.dashboard .workspace .variant-table tr:hover td{background:#fcfaf8}
+.dashboard .workspace .btn{border-radius:10px}
+.dashboard .workspace .btn.light{background:#fff;color:#70081e;border-color:#e6d8d5}
+.dashboard .workspace .status-toolbar{border:1px solid #e8dfda;box-shadow:var(--fashion-shadow)}
+.dashboard .workspace .flag.good{background:#e7f4ec;color:#287051}
+@media(max-width:700px){.dashboard .workspace .quick-nav{top:0;margin-inline:-4px;padding:10px 4px;gap:6px}.dashboard .workspace .quick-nav a{padding:10px 13px;font-size:12px}.dashboard .workspace section.block{padding:18px 15px;border-radius:16px;scroll-margin-top:82px}.dashboard .workspace .photo-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.dashboard .workspace .photo img{height:180px}.dashboard .workspace .upload-row{padding:11px}.dashboard .workspace .variant-table tr:hover td{background:transparent}}
