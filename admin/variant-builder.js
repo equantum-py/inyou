@@ -22,7 +22,6 @@
  const selectedColors=new Set();
  const remembered=new Map();
  let blobUrls=[];
- let lastChoice=null;
  function key(size,color){return String(size)+'|'+color.toLocaleLowerCase('es');}
  function snapshot(){
   for(const row of list.querySelectorAll('.studio-generated-line')){
@@ -97,7 +96,7 @@
   const color=customColor.value.trim().replace(/\s+/g,' ');
   if(!color||color.length>45){customColor.focus();return;}
   const duplicate=colors.find(v=>v.toLocaleLowerCase('es')===color.toLocaleLowerCase('es'));
-  if(duplicate){selectedColors.add(duplicate);customColor.value='';renderChoices();renderVariants();return;}
+  if(duplicate){snapshot();const already=selectedColors.has(duplicate);selectedColors.add(duplicate);if(!already&&combinations().length>50){selectedColors.delete(duplicate);alert('Máximo 50 combinaciones por prenda.');}else{customColor.value='';}renderChoices();renderVariants();return;}
   if(colors.length>=30){alert('Máximo 30 colores disponibles en el selector.');return;}
   snapshot();
   colors.push(color);selectedColors.add(color);
