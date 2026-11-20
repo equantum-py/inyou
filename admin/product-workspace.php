@@ -5,17 +5,49 @@ require_once dirname(__DIR__).'/lib/inyou-storage.php';
 requireAuth();
 
 $id=filter_var($_GET['product']??$_POST['product_id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
-if(!$id){http_response_code(400);exit('Producto no válido.');}
+$isNew=(!$id&&isset($_GET['new']));
+if(!$id&&!$isNew){http_response_code(400);exit('Producto no válido.');}
 $canEdit=canManageCatalog();$error='';$notice='';$product=null;$variants=[];$photos=[];$collections=[];$sizes=[];
 try{
  $pdo=db();
- $find=$pdo->prepare("SELECT p.*, (SELECT pc.collection_id FROM product_collections pc WHERE pc.product_id=p.id ORDER BY pc.sort_order LIMIT 1) AS collection_id FROM products p WHERE p.id=?");
- $find->execute([$id]);$product=$find->fetch();
- if(!$product)throw new RuntimeException('Producto no encontrado.');
+ if($id){
+  $find=$pdo->prepare("SELECT p.*, (SELECT pc.collection_id FROM product_collections pc WHERE pc.product_id=p.id ORDER BY pc.sort_order LIMIT 1) AS collection_id FROM products p WHERE p.id=?");
+  $find->execute([$id]);$product=$find->fetch();
+  if(!$product)throw new RuntimeException('Producto no encontrado.');
+ }
  if($_SERVER['REQUEST_METHOD']==='POST'){
   if(!$canEdit){http_response_code(403);throw new RuntimeException('No tenés permiso para editar productos.');}
   if(!validCsrf()){http_response_code(403);throw new RuntimeException('La sesión venció. Actualizá la página.');}
   $action=(string)($_POST['action']??'');
+  if($action==='create'){
+   if(!$isNew)throw new RuntimeException('La prenda ya está creada.');
+   $name=trim((string)($_POST['name']??''));
+   $description=trim((string)($_POST['description']??''));
+   $priceRaw=trim((string)($_POST['base_price']??''));
+   $collectionId=filter_var($_POST['collection_id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+   $type=(string)($_POST['product_type']??'remera');
+   $audience=(string)($_POST['audience']??'Unisex');
+   $fit=(string)($_POST['fit']??'');
+   if($name===''||mb_strlen($name)>200)throw new RuntimeException('Ingresá un nombre para la prenda.');
+   if(!preg_match('/^[0-9]{1,12}$/',$priceRaw)||(int)$priceRaw<=0)throw new RuntimeException('Ingresá un precio válido en guaraníes.');
+   if(!in_array($type,['remera','kepi'],true)||!in_array($audience,['Mujer','Hombre','Unisex'],true)||!in_array($fit,['','Regular','Oversize','Cropped','Único'],true))throw new RuntimeException('Revisá los datos de la prenda.');
+   if(!$collectionId)throw new RuntimeException('Seleccioná una colección.');
+   $valid=$pdo->prepare('SELECT COUNT(*) FROM collections WHERE id=? AND is_active=1');
+   $valid->execute([$collectionId]);if(!(int)$valid->fetchColumn())throw new RuntimeException('Elegí una colección activa.');
+   $baseSlug=trim((string)preg_replace('/[^a-z0-9]+/','-',strtolower(iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$name)?:$name)),'-');
+   $baseSlug=substr($baseSlug?:'prenda',0,110);
+   $slug=$baseSlug;
+   $check=$pdo->prepare('SELECT COUNT(*) FROM products WHERE slug=?');
+   for($suffix=2;$suffix<1000;$suffix++){$check->execute([$slug]);if(!(int)$check->fetchColumn())break;$slug=$baseSlug.'-'.$suffix;}
+   $pdo->beginTransaction();
+   $insert=$pdo->prepare("INSERT INTO products (sku,slug,name,description,base_price,currency,status,featured,product_type,audience,fit) VALUES (NULL,?,?,?,?,'PYG','draft',0,?,?,?)");
+   $insert->execute([$slug,$name,$description!==''?$description:null,(int)$priceRaw,$type,$audience,$fit]);
+   $id=(int)$pdo->lastInsertId();
+   $pdo->prepare('INSERT INTO product_collections (product_id,collection_id,sort_order) VALUES (?,?,0)')->execute([$id,$collectionId]);
+   $pdo->commit();auditLog($pdo,'product.create','product',$id);
+   header('Location: /admin/product-workspace.php?product='.$id.'&created=1',true,303);exit;
+  }
+  if(!$id)throw new RuntimeException('Primero guardá los datos básicos de la prenda.');
   if($action==='details'){
    $name=trim((string)($_POST['name']??''));$description=trim((string)($_POST['description']??''));
    $priceRaw=trim((string)($_POST['base_price']??''));$collectionId=filter_var($_POST['collection_id']??null,FILTER_VALIDATE_INT);
@@ -131,11 +163,13 @@ try{
  $q->execute([$id]);$variants=$q->fetchAll();
  $q=$pdo->prepare('SELECT id,file_path,alt_text,is_primary FROM product_images WHERE product_id=? ORDER BY is_primary DESC,sort_order,id');$q->execute([$id]);$photos=$q->fetchAll();
  if(isset($_GET['saved']))$notice='Cambios guardados.';
+ if(isset($_GET['created']))$notice='Prenda creada como borrador. Ahora podés cargar fotos, talles y stock en esta misma pantalla.';
 }catch(Throwable $e){
  if(isset($pdo)&&$pdo->inTransaction())$pdo->rollBack();
  error_log('InYou workspace: '.$e->getMessage());
  $error=$e instanceof PDOException?'No se pudo guardar el cambio en MySQL.':$e->getMessage();
 }
+if(!$product)$product=['name'=>'Nueva prenda','status'=>'draft','base_price'=>0,'description'=>'','collection_id'=>0,'product_type'=>'remera','audience'=>'Unisex','fit'=>''];
 $hasPhoto=false;foreach($photos as $p){if(inyouStorageIsPath((string)$p['file_path'])){$hasPhoto=true;break;}}
 $available=0;foreach($variants as $v){if($v['is_active']&&($v['availability_mode']==='bajo_pedido'||(int)$v['stock_qty']>0))$available++;}
 $hasCollection=false;foreach($collections as $c){if((int)$c['id']===(int)($product['collection_id']??0)){$hasCollection=true;break;}}
@@ -151,6 +185,32 @@ $readyToPublish=$hasPhoto&&$available>0&&$hasCollection&&(int)($product['base_pr
 </style></head><body class="dashboard">
 <?php adminSidebar('products');?>
 <main class="content"><div class="workspace"><header><a href="/admin/products.php" style="text-decoration:none;color:#6a6862">← Volver a productos</a><span style="font-size:12px;color:#777">Editor simple · InYou</span></header>
+<?php if($isNew):?>
+<div class="studio-product-new">
+  <div class="fashion-kicker">CATÁLOGO / NUEVA PRENDA</div>
+  <h1>Agregar prenda</h1>
+  <p class="sub">Completá los datos básicos y continuá acá mismo con fotografías, talles, colores y publicación.</p>
+  <?php if($error):?><div class="err" role="alert"><?=h($error)?></div><?php endif;?>
+  <div class="studio-new-editor">
+    <div class="studio-new-main">
+      <section class="block"><h2>Información de la prenda</h2>
+      <form method="post" id="studio-create-form">
+      <input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="create">
+      <label class="caption" for="new-name">Nombre de la prenda *</label><input id="new-name" type="text" name="name" maxlength="200" placeholder="Ej.: Remera oversize rosa" required>
+      <label class="caption" for="new-desc">Descripción</label><textarea id="new-desc" name="description" placeholder="Materiales, estilo, cuidados y detalles"></textarea>
+      <div class="fields">
+      <div><label class="caption" for="new-price">Precio en G. *</label><input id="new-price" type="number" min="1" name="base_price" placeholder="Ej.: 85000" required></div>
+      <div><label class="caption" for="new-coll">Colección *</label><select id="new-coll" name="collection_id" required><option value="">Elegir colección</option><?php foreach($collections as $c):?><option value="<?=(int)$c['id']?>"><?=h($c['name'])?></option><?php endforeach;?></select></div>
+      <div><label class="caption" for="new-type">Tipo</label><select id="new-type" name="product_type"><option value="remera">Remera</option><option value="kepi">Kepi</option></select></div>
+      <div><label class="caption" for="new-aud">Para quién</label><select id="new-aud" name="audience"><option>Mujer</option><option>Hombre</option><option selected>Unisex</option></select></div>
+      <div><label class="caption" for="new-fit">Corte</label><select id="new-fit" name="fit"><option value="">Sin definir</option><option>Regular</option><option>Oversize</option><option>Cropped</option><option>Único</option></select></div>
+      </div><div class="savebar"><button class="btn" type="submit">Guardar borrador y continuar →</button></div></form>
+      </section>
+    </div>
+    <aside class="studio-new-side"><section class="block"><h2>Publicación</h2><span class="flag">Borrador</span><p class="hint">La prenda no aparece en la tienda hasta que agregues fotografías y talles disponibles y la publiques.</p><h3>Todo en una página</h3><p class="hint">Después de crear el borrador, vas a completar las fotos, variantes y stock aquí, sin volver al catálogo.</p></section></aside>
+  </div>
+</div>
+<?php else:?>
 <div class="workspace-top"><div><div class="eyebrow">EDITAR PRODUCTO</div><h1><?=h($product['name']??'Producto')?></h1><p class="sub">Todo lo importante en una sola pantalla, sin pasos innecesarios.</p><span class="flag"><?=h($product['status']==='active'?'Publicado':'Borrador / no publicado')?></span><span class="flag <?=$hasPhoto?'good':''?>"><?=$hasPhoto?'Foto cargada':'Falta foto disponible'?></span><span class="flag <?=$available?'good':''?>"><?=$available?'Variantes disponibles: '.$available:'Sin variantes disponibles'?></span></div><a class="btn light" href="/admin/products.php?edit=<?=$id?>">Opciones avanzadas</a></div>
 <?php if($error):?><div class="err"><?=h($error)?></div><?php endif;?><?php if($notice):?><div class="notice"><?=h($notice)?></div><?php endif;?>
 <div class="status-toolbar" aria-label="Estado y publicación del producto">
@@ -199,4 +259,4 @@ $readyToPublish=$hasPhoto&&$available>0&&$hasCollection&&(int)($product['base_pr
 <?php else:?><input type="hidden" name="status" value="active"><button class="btn" type="submit" <?=$readyToPublish?'':'disabled'?> style="<?=$readyToPublish?'':'opacity:.45;cursor:not-allowed'?>">Publicar producto en la tienda</button>
 <?php endif;?></form><?php endif;?>
 </section>
-</div></main></body></html>
+<?php endif;?></div></main></body></html>
