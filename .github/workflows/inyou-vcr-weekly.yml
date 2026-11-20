@@ -1,0 +1,42 @@
+name: InYou - Vigilar imágenes Docker
+on:
+  schedule:
+    - cron: '15 12 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  registry-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar acceso
+        id: access
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo '⚠️ Configurar VERCEL_TOKEN en GitHub Actions Secrets. Esta ejecución no hizo ninguna consulta ni eliminación.' >> "$GITHUB_STEP_SUMMARY"
+            echo 'enabled=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'enabled=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Reporte de capacidad (solo lectura)
+        if: steps.access.outputs.enabled == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -o pipefail
+          bash scripts/cleanup-vcr.sh --report 2>&1 | tee /tmp/inyou-vcr-report.txt
+          {
+            echo '## InYou · Registro Docker'
+            echo '~~~text'
+            cat /tmp/inyou-vcr-report.txt
+            echo '~~~'
+            echo 'Revisión semanal, sin eliminación de imágenes ni despliegues.'
+          } >> "$GITHUB_STEP_SUMMARY"
