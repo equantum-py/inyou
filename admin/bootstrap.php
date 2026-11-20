@@ -119,15 +119,15 @@ function auditLog(PDO $pdo,string $action,string $entityType,?int $entityId=null
 
 function adminMenuItems():array{
     $items=[
-        ['href'=>'/admin/','label'=>'Resumen'],
-        ['href'=>'/admin/products.php','label'=>'Productos'],
+        ['href'=>'/admin/','label'=>'Inicio'],
+        ['href'=>'/admin/products.php','label'=>'Mis prendas'],
         ['href'=>'/admin/collections.php','label'=>'Colecciones'],
-        ['href'=>'/admin/inventory.php','label'=>'Inventario'],
-        ['href'=>'/admin/media.php','label'=>'Medios'],
+        ['href'=>'/admin/inventory.php','label'=>'Stock y talles'],
+        ['href'=>'/admin/media.php','label'=>'Fotografías'],
     ];
-    if(canManageSettings())$items[]=['href'=>'/admin/settings.php','label'=>'Configuración'];
-    if(canViewAudit())$items[]=['href'=>'/admin/audit.php','label'=>'Actividad'];
-    if(canManageUsers())$items[]=['href'=>'/admin/users.php','label'=>'Usuarios'];
+    if(canManageSettings())$items[]=['href'=>'/admin/settings.php','label'=>'Ajustes'];
+    if(canViewAudit())$items[]=['href'=>'/admin/audit.php','label'=>'Historial'];
+    if(canManageUsers())$items[]=['href'=>'/admin/users.php','label'=>'Equipo'];
     return $items;
 }
 
