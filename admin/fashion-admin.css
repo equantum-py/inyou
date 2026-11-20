@@ -159,3 +159,9 @@ body.dashboard{background:var(--admin-bg);color:var(--admin-text);font-family:In
 .workspace .savebar{justify-content:flex-end}
 @media(max-width:900px){.studio-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.studio-split{grid-template-columns:1fr}}
 @media(max-width:700px){.studio-section{padding:15px;margin:13px 0}.studio-actions{gap:8px}.studio-action{min-height:134px;padding:14px}.studio-action strong{font-size:13px}.studio-action small{font-size:10px}.studio-draft b{font-size:10px}.workspace .quick-nav{top:0}.workspace .photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.workspace .variant-table{min-width:0;width:100%}.workspace .variant-table th:nth-child(3),.workspace .variant-table td:nth-child(3){display:none}.workspace .variant-table td{padding:10px 4px!important}}
+
+/* Corregir contraste de filtros: el texto y el contador deben ser visibles sobre bordó. */
+body.dashboard .catalog-filter-tabs a.active{background:#70081e;color:#fff;border-bottom-color:#70081e}
+body.dashboard .catalog-filter-tabs a.active span{color:#fff;opacity:1}
+body.dashboard .catalog-filter-tabs a:not(.active) span{color:#756a64;opacity:1}
+body.dashboard .catalog-filter-tabs a:focus-visible{outline:2px solid #70081e;outline-offset:3px}
