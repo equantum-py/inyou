@@ -28,23 +28,87 @@ try{
    $type=(string)($_POST['product_type']??'remera');
    $audience=(string)($_POST['audience']??'Unisex');
    $fit=(string)($_POST['fit']??'');
-   if($name===''||mb_strlen($name)>200)throw new RuntimeException('Ingresá un nombre para la prenda.');
+   $requestedStatus=(string)($_POST['status']??'draft');
+   if($name===''||mb_strlen($name)>200)throw new RuntimeException('Ingresá el nombre de la prenda (máximo 200 caracteres).');
    if(!preg_match('/^[0-9]{1,12}$/',$priceRaw)||(int)$priceRaw<=0)throw new RuntimeException('Ingresá un precio válido en guaraníes.');
-   if(!in_array($type,['remera','kepi'],true)||!in_array($audience,['Mujer','Hombre','Unisex'],true)||!in_array($fit,['','Regular','Oversize','Cropped','Único'],true))throw new RuntimeException('Revisá los datos de la prenda.');
-   if(!$collectionId)throw new RuntimeException('Seleccioná una colección.');
+   if(!in_array($type,['remera','kepi'],true)||!in_array($audience,['Mujer','Hombre','Unisex'],true)||!in_array($fit,['','Regular','Oversize','Cropped','Único'],true))throw new RuntimeException('Revisá tipo, público y corte de la prenda.');
+   if(!in_array($requestedStatus,['draft','active'],true))throw new RuntimeException('Estado no válido.');
+   if(!$collectionId)throw new RuntimeException('Elegí una colección.');
    $valid=$pdo->prepare('SELECT COUNT(*) FROM collections WHERE id=? AND is_active=1');
    $valid->execute([$collectionId]);if(!(int)$valid->fetchColumn())throw new RuntimeException('Elegí una colección activa.');
+   $rows=$_POST['new_variants']??[];
+   if(!is_array($rows)||count($rows)>50)throw new RuntimeException('Máximo 50 combinaciones de talle y color.');
+   $validatedVariants=[];$used=[];
+   $sizeCheck=$pdo->prepare('SELECT COUNT(*) FROM sizes WHERE id=? AND is_active=1');
+   foreach($rows as $row){
+    if(!is_array($row))throw new RuntimeException('Variante inválida.');
+    $color=trim((string)($row['color']??''));$sizeRaw=trim((string)($row['size_id']??''));
+    if($color===''&&$sizeRaw==='')continue;
+    $sizeId=filter_var($sizeRaw,FILTER_VALIDATE_INT,['options'=>['min_range'=>1]]);
+    $stockRaw=trim((string)($row['stock']??'0'));$extraPrice=trim((string)($row['price']??''));
+    if(!$sizeId||$color===''||mb_strlen($color)>45)throw new RuntimeException('Cada combinación necesita talle y color válidos.');
+    $sizeCheck->execute([$sizeId]);if(!(int)$sizeCheck->fetchColumn())throw new RuntimeException('Uno de los talles no está disponible.');
+    if(!preg_match('/^\d{1,8}$/',$stockRaw))throw new RuntimeException('El stock debe estar entre 0 y 99.999.999.');
+    if($extraPrice!==''&&(!preg_match('/^\d{1,12}$/',$extraPrice)||(int)$extraPrice<=0))throw new RuntimeException('Precio especial de variante no válido.');
+    $key=$sizeId.':'.mb_strtolower($color);
+    if(isset($used[$key]))throw new RuntimeException('No repitas una combinación de talle y color.');
+    $used[$key]=true;
+    $validatedVariants[]=['size'=>$sizeId,'color'=>$color,'stock'=>(int)$stockRaw,'price'=>$extraPrice===''?null:(int)$extraPrice,'active'=>!empty($row['active'])?1:0];
+   }
+   $images=[];
+   $uploads=$_FILES['images']??null;
+   if(is_array($uploads)&&isset($uploads['name'])&&is_array($uploads['name'])){
+    if(count($uploads['name'])>8)throw new RuntimeException('Podés subir hasta 8 fotografías por producto.');
+    foreach($uploads['name'] as $ix=>$filename){
+     $errorCode=(int)($uploads['error'][$ix]??UPLOAD_ERR_NO_FILE);
+     if($errorCode===UPLOAD_ERR_NO_FILE)continue;
+     if($errorCode!==UPLOAD_ERR_OK)throw new RuntimeException('No se pudo cargar una fotografía. Revisá que pese menos de 10 MB.');
+     $size=(int)($uploads['size'][$ix]??0);$tmp=(string)($uploads['tmp_name'][$ix]??'');
+     if($size<1||$size>INYOU_STORAGE_MAX_BYTES||!is_uploaded_file($tmp))throw new RuntimeException('Fotografía inválida o mayor a 10 MB.');
+     $mime=(new finfo(FILEINFO_MIME_TYPE))->file($tmp);
+     $allowed=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp'];
+     if(!isset($allowed[$mime]))throw new RuntimeException('Solo se permiten fotos JPG, PNG y WEBP.');
+     $dims=@getimagesize($tmp);
+     if(!$dims||$dims[0]<1||$dims[1]<1||$dims[0]*$dims[1]>25000000)throw new RuntimeException('Una fotografía supera el máximo de 25 megapíxeles.');
+     $images[]=['tmp'=>$tmp,'mime'=>$mime,'extension'=>$allowed[$mime]];
+    }
+   }
+   if($requestedStatus==='active'){
+    $sellable=false;foreach($validatedVariants as $variant){if($variant['active']&&$variant['stock']>0){$sellable=true;break;}}
+    if(!$sellable||!count($images))throw new RuntimeException('Para publicar necesitás al menos una foto y un talle/color activo con stock. Podés guardar como borrador.');
+   }
    $baseSlug=trim((string)preg_replace('/[^a-z0-9]+/','-',strtolower(iconv('UTF-8','ASCII//TRANSLIT//IGNORE',$name)?:$name)),'-');
    $baseSlug=substr($baseSlug?:'prenda',0,110);
    $slug=$baseSlug;
    $check=$pdo->prepare('SELECT COUNT(*) FROM products WHERE slug=?');
    for($suffix=2;$suffix<1000;$suffix++){$check->execute([$slug]);if(!(int)$check->fetchColumn())break;$slug=$baseSlug.'-'.$suffix;}
-   $pdo->beginTransaction();
-   $insert=$pdo->prepare("INSERT INTO products (sku,slug,name,description,base_price,currency,status,featured,product_type,audience,fit) VALUES (NULL,?,?,?,?,'PYG','draft',0,?,?,?)");
-   $insert->execute([$slug,$name,$description!==''?$description:null,(int)$priceRaw,$type,$audience,$fit]);
-   $id=(int)$pdo->lastInsertId();
-   $pdo->prepare('INSERT INTO product_collections (product_id,collection_id,sort_order) VALUES (?,?,0)')->execute([$id,$collectionId]);
-   $pdo->commit();auditLog($pdo,'product.create','product',$id);
+   $uploadedPaths=[];
+   try{
+    $pdo->beginTransaction();
+    $insert=$pdo->prepare("INSERT INTO products (sku,slug,name,description,base_price,currency,status,featured,product_type,audience,fit) VALUES (NULL,?,?,?,?,'PYG','draft',0,?,?,?)");
+    $insert->execute([$slug,$name,$description!==''?$description:null,(int)$priceRaw,$type,$audience,$fit]);
+    $id=(int)$pdo->lastInsertId();
+    $pdo->prepare('INSERT INTO product_collections (product_id,collection_id,sort_order) VALUES (?,?,0)')->execute([$id,$collectionId]);
+    $addVariant=$pdo->prepare("INSERT INTO product_variants (product_id,size_id,sku,color_name,price_override,stock_qty,availability_mode,lead_time,is_active,sort_order) VALUES (?,?,?,?,?,?,'stock','',?,?)");
+    foreach($validatedVariants as $index=>$v){
+     $sku='INY-'.$id.'-'.strtoupper(bin2hex(random_bytes(5)));
+     $addVariant->execute([$id,$v['size'],$sku,$v['color'],$v['price'],$v['stock'],$v['active'],$index]);
+    }
+    $addPhoto=$pdo->prepare('INSERT INTO product_images (product_id,file_path,alt_text,is_primary,sort_order) VALUES (?,?,?,?,?)');
+    foreach($images as $index=>$photo){
+     $path='supabase/products/p'.$id.'-'.bin2hex(random_bytes(16)).'.'.$photo['extension'];
+     $bytes=file_get_contents($photo['tmp']);if($bytes===false)throw new RuntimeException('No se pudo leer una fotografía.');
+     inyouStorageUpload($path,$bytes,$photo['mime']);
+     $uploadedPaths[]=$path;
+     $addPhoto->execute([$id,$path,$name,$index===0?1:0,$index]);
+    }
+    if($requestedStatus==='active')$pdo->prepare("UPDATE products SET status='active' WHERE id=?")->execute([$id]);
+    $pdo->commit();auditLog($pdo,'product.create','product',$id);
+   }catch(Throwable $e){
+    if($pdo->inTransaction())$pdo->rollBack();
+    foreach($uploadedPaths as $path){try{inyouStorageDelete($path);}catch(Throwable $ignore){}}
+    throw $e;
+   }
    header('Location: /admin/product-workspace.php?product='.$id.'&created=1',true,303);exit;
   }
   if(!$id)throw new RuntimeException('Primero guardá los datos básicos de la prenda.');
