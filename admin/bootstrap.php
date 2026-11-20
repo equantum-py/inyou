@@ -125,6 +125,7 @@ function adminMenuItems():array{
         ['href'=>'/admin/collections.php','label'=>'Colecciones'],
         ['href'=>'/admin/inventory.php','label'=>'Stock y talles'],
         ['href'=>'/admin/media.php','label'=>'Fotografías'],
+        ['href'=>'/admin/site-images.php','label'=>'Banners e imágenes'],
     ];
     if(canManageSettings())$items[]=['href'=>'/admin/settings.php','label'=>'Ajustes'];
     if(canViewAudit())$items[]=['href'=>'/admin/audit.php','label'=>'Historial'];
@@ -142,6 +143,7 @@ function adminSidebar(string $active=''):void{
         if($active==='collections'&&$item['href']==='/admin/collections.php')$isActive=true;
         if($active==='inventory'&&$item['href']==='/admin/inventory.php')$isActive=true;
         if($active==='media'&&$item['href']==='/admin/media.php')$isActive=true;
+        if($active==='visuals'&&$item['href']==='/admin/site-images.php')$isActive=true;
         if($active==='settings'&&$item['href']==='/admin/settings.php')$isActive=true;
         if($active==='audit'&&$item['href']==='/admin/audit.php')$isActive=true;
         if($active==='users'&&$item['href']==='/admin/users.php')$isActive=true;
