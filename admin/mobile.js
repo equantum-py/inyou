@@ -30,7 +30,7 @@
     title.textContent='inYou.';
     const quick=document.createElement('a');
     quick.className='admin-mobile-quick';
-    quick.href='/admin/products.php?new=1';
+    quick.href='/admin/product-workspace.php?new=1';
     quick.textContent='+ Prenda';
     top.append(open,title,quick);
     const overlay=document.createElement('button');
