@@ -244,7 +244,7 @@ $hasCollection=false;foreach($collections as $c){if((int)$c['id']===(int)($produ
 $readyToPublish=$hasPhoto&&$available>0&&$hasCollection&&(int)($product['base_price']??0)>0;
 
 ?>
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Editar <?=h($product['name']??'producto')?> · InYou</title><link rel="stylesheet" href="/admin/style.css"><link rel="stylesheet" href="/admin/fashion-admin.css?v=6">
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Editar <?=h($product['name']??'producto')?> · InYou</title><link rel="stylesheet" href="/admin/style.css"><link rel="stylesheet" href="/admin/fashion-admin.css?v=7">
 <style>
 .workspace{max-width:1150px;margin:auto}.workspace-top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin:12px 0 24px}.workspace h1{margin:5px 0;font-size:clamp(30px,3.5vw,44px)}.workspace .sub{font-size:13px;color:#767675;margin:5px 0}.workspace .quick-nav{display:flex;gap:9px;overflow-x:auto;padding:3px 0 14px;margin-bottom:5px}.workspace .quick-nav a{display:inline-block;white-space:nowrap;border-radius:30px;border:1px solid #ddd7d0;padding:10px 16px;background:#fff;color:#282525;text-decoration:none;font-size:13px}.workspace section.block{background:#fff;border:1px solid #e8e2dc;border-radius:18px;padding:25px;margin:16px 0;scroll-margin-top:16px;box-shadow:0 6px 22px rgba(49,30,25,.035)}.workspace .section-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:16px}.workspace h2{font-size:20px;letter-spacing:-.025em;margin:0}.workspace .hint{font-size:13px;color:#767675;margin:4px 0 0}.workspace label.caption{font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:7px}.workspace input[type=text],.workspace input[type=number],.workspace textarea,.workspace select,.workspace input[type=file]{width:100%;padding:12px;border:1px solid #ddd9d4;border-radius:10px;background:#fff;font:inherit;font-size:14px;min-width:0}.workspace input:focus,.workspace textarea:focus,.workspace select:focus{outline:2px solid #c3dacc;outline-offset:1px}.workspace .fields{display:grid;grid-template-columns:1fr 1fr;gap:15px}.workspace .field-full{grid-column:1/-1}.workspace textarea{min-height:90px}.workspace .btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;background:#212624;color:white;padding:12px 17px;border:0;border-radius:10px;font-size:13px;text-decoration:none;cursor:pointer;font-weight:600}.workspace .btn.light{background:#f5f3ef;color:#30302d;border:1px solid #e5dfd8}.workspace .btn.small{padding:8px 11px;font-size:12px}.workspace .savebar{display:flex;align-items:center;gap:12px;margin-top:15px;flex-wrap:wrap}.workspace .variant-table{width:100%;border-collapse:collapse}.workspace .variant-table th{text-align:left;font-size:11px;text-transform:uppercase;color:#888;letter-spacing:.07em}.workspace .variant-table td,.workspace .variant-table th{padding:11px 8px;border-bottom:1px solid #efebe7}.workspace .variant-table input[type=number]{width:110px;padding:9px}.workspace .variant-table input[type=checkbox]{width:19px;height:19px;accent-color:#70081e}.workspace .variant-table .v-name{font-weight:700;font-size:13px}.workspace .variant-table .v-sku{display:block;font-size:10px;color:#999;margin-top:4px}.workspace .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:12px}.workspace .photo{padding:8px;background:#faf8f5;border-radius:12px}.workspace .photo img,.workspace .photo .missing{width:100%;height:145px;object-fit:cover;border-radius:8px;background:#f2e8e6}.workspace .photo .missing{display:grid;place-items:center;text-align:center;font-size:12px;padding:12px;color:#8e5757}.workspace .photo .photo-actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;align-items:center;font-size:12px}.workspace .upload-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:end}.workspace .flag{font-size:12px;border-radius:20px;padding:7px 10px;background:#f2f0eb;display:inline-block;margin:3px 4px 3px 0}.workspace .flag.good{background:#e3f2e9;color:#245e43}.workspace .notice{padding:12px 16px;border-radius:10px;background:#e4f3e9;color:#235a39;margin:12px 0}.workspace .err{padding:12px 16px;border-radius:10px;background:#fcecea;color:#842c2c;margin:12px 0}.workspace .separator{border-top:1px solid #ece8e3;margin:20px 0}.workspace .advanced{font-size:13px;color:#777}.workspace .advanced a{color:#70081e}
 @media(max-width:760px){.workspace .fields,.workspace .upload-row{grid-template-columns:1fr}.workspace section.block{padding:17px;border-radius:14px}.workspace .variant-table th:nth-child(3),.workspace .variant-table td:nth-child(3){display:none}.workspace .variant-table input[type=number]{width:76px}.workspace-top{display:block}.workspace .section-head{display:block}}
@@ -284,17 +284,33 @@ $readyToPublish=$hasPhoto&&$available>0&&$hasCollection&&(int)($product['base_pr
     <div id="studio-image-preview" class="studio-image-preview" aria-live="polite"></div>
    </section>
    <section class="block" id="nueva-talles">
-    <div class="section-head"><div><h2>Talles, colores y stock</h2><p class="hint">Agregá todas las combinaciones que vas a vender. Podés dejar stock en 0 mientras completás el catálogo.</p></div></div>
-    <div class="studio-variant-head"><span>Talle</span><span>Color</span><span>Stock</span><span>Precio especial</span><span>Vender</span><span></span></div>
+    <div class="section-head"><div><h2>Talles, colores y stock</h2><p class="hint">Elegí varios talles y colores. Las combinaciones se crean automáticamente, sin cargar una por una.</p></div></div>
+    <div class="studio-builder-picker">
+     <fieldset class="studio-picker-group"><legend>1. Seleccioná los talles</legend>
+      <div class="studio-choice-list" id="studio-size-options" aria-label="Talles disponibles">
+       <?php foreach($sizes as $sz):?>
+        <label class="studio-choice"><input type="checkbox" value="<?=(int)$sz['id']?>" data-label="<?=h($sz['label'])?>"><span><?=h($sz['label'])?></span></label>
+       <?php endforeach;?>
+      </div>
+      <?php if(!$sizes):?><p class="hint">No hay talles disponibles. Configurá talles antes de publicar.</p><?php endif;?>
+     </fieldset>
+     <fieldset class="studio-picker-group"><legend>2. Seleccioná los colores</legend>
+      <div class="studio-choice-list" id="studio-color-options" aria-label="Colores disponibles"></div>
+      <label class="studio-custom-color"><span>Otro color</span><span class="studio-custom-color-entry"><input id="studio-custom-color" type="text" maxlength="45" placeholder="Ej.: Bordó" autocomplete="off"><button id="studio-add-color" class="btn light" type="button">Agregar color</button></span></label>
+     </fieldset>
+    </div>
+    <div class="studio-combinations-head">
+     <div><h3>3. Combinaciones generadas</h3><p class="hint" id="studio-variant-count" aria-live="polite">Seleccioná talles y colores para comenzar.</p></div>
+    </div>
+    <div class="studio-bulk-stock"><label for="studio-bulk-qty">Stock para todas</label><input id="studio-bulk-qty" type="number" min="0" max="99999999" value="0" inputmode="numeric"><button id="studio-apply-stock" class="btn light" type="button">Aplicar a todas</button><small>También podés ajustar cada combinación individualmente.</small></div>
+    <div class="studio-generated-head" aria-hidden="true"><span>Combinación</span><span>Stock</span><span>Precio especial</span><span>Disponible</span></div>
     <div id="studio-new-variants" class="studio-new-variants"></div>
-    <button type="button" class="btn light studio-add-variant" id="studio-add-variant">＋ Agregar talle y color</button>
-    <template id="studio-variant-template"><div class="studio-variant-line">
-     <label><span>Talle</span><select data-field="size_id"><option value="">Elegir</option><?php foreach($sizes as $sz):?><option value="<?=(int)$sz['id']?>"><?=h($sz['label'])?></option><?php endforeach;?></select></label>
-     <label><span>Color</span><input data-field="color" type="text" maxlength="45" placeholder="Ej.: Negro"></label>
-     <label><span>Stock</span><input data-field="stock" type="number" min="0" max="99999999" value="0"></label>
-     <label><span>Precio especial</span><input data-field="price" type="number" min="1" placeholder="Precio base"></label>
-     <label class="studio-active-choice"><span>Vender</span><input data-field="active" type="checkbox" value="1" checked></label>
-     <button type="button" class="studio-remove-variant" title="Quitar combinación" aria-label="Quitar combinación">✕</button>
+    <p class="studio-variants-empty" id="studio-variants-empty">Las combinaciones aparecerán aquí automáticamente.</p>
+    <template id="studio-variant-template"><div class="studio-variant-line studio-generated-line">
+     <div class="studio-combo"><strong data-variant-label></strong><small data-variant-description></small><input type="hidden" data-field="size_id"><input type="hidden" data-field="color"></div>
+     <label><span>Stock</span><input data-field="stock" type="number" inputmode="numeric" min="0" max="99999999" value="0" required></label>
+     <label><span>Precio especial</span><input data-field="price" type="number" inputmode="numeric" min="1" placeholder="Precio base"></label>
+     <label class="studio-active-choice"><span>Disponible</span><input data-field="active" type="checkbox" value="1" checked></label>
     </div></template>
    </section>
   </div>
@@ -313,53 +329,7 @@ $readyToPublish=$hasPhoto&&$available>0&&$hasCollection&&(int)($product['base_pr
  </div>
  </form>
 </div>
-<script>
-(function(){
- const form=document.getElementById('studio-create-form');
- if(!form)return;
- const target=document.getElementById('studio-new-variants');
- const template=document.getElementById('studio-variant-template');
- const photos=document.getElementById('new-images');
- const preview=document.getElementById('studio-image-preview');
- const status=document.getElementById('new-status');
- const help=document.getElementById('studio-publish-help');
- let next=0,urls=[];
- function add(){
-  if(target.children.length>=50)return;
-  const fragment=template.content.cloneNode(true);
-  const row=fragment.querySelector('.studio-variant-line');
-  const idx=next++;
-  row.querySelectorAll('[data-field]').forEach(input=>input.name='new_variants['+idx+']['+input.dataset.field+']');
-  row.querySelector('.studio-remove-variant').addEventListener('click',()=>row.remove());
-  target.append(row);
- }
- document.getElementById('studio-add-variant').addEventListener('click',add);
- function renderPhotos(){
-  urls.forEach(URL.revokeObjectURL);urls=[];
-  preview.replaceChildren();
-  const files=Array.from(photos.files||[]);
-  if(files.length>8){photos.value='';alert('Seleccioná como máximo 8 fotografías.');return;}
-  files.forEach((file,index)=>{
-   if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>10*1024*1024){photos.value='';preview.replaceChildren();alert('Usá JPG, PNG o WEBP, con máximo 10 MB por foto.');return;}
-   const figure=document.createElement('figure');
-   const img=document.createElement('img');
-   const url=URL.createObjectURL(file);urls.push(url);img.src=url;img.alt=file.name;
-   const caption=document.createElement('figcaption');
-   caption.textContent=index===0?'Principal':'Foto '+(index+1);
-   figure.append(img,caption);preview.append(figure);
-  });
- }
- photos.addEventListener('change',renderPhotos);
- status.addEventListener('change',()=>{help.textContent=status.value==='active'?'Para publicar ahora necesitás una foto y un talle/color activo con stock.':'Podés guardar como borrador aunque todavía no hayas cargado fotos o stock.';});
- form.addEventListener('submit',e=>{
-  if(status.value!=='active')return;
-  const hasPhoto=photos.files&&photos.files.length>0;
-  const sellable=Array.from(target.querySelectorAll('.studio-variant-line')).some(row=>Number(row.querySelector('[data-field="stock"]').value)>0&&row.querySelector('[data-field="active"]').checked&&row.querySelector('[data-field="size_id"]').value&&row.querySelector('[data-field="color"]').value.trim());
-  if(!hasPhoto||!sellable){e.preventDefault();alert('Para publicar agregá al menos una foto y una combinación de talle/color con stock. O guardá como borrador.');}
- });
- add();
-})();
-</script>
+<script defer src="/admin/variant-builder.js?v=1"></script>
 <?php else:?>
 <div class="workspace-top"><div><div class="eyebrow">EDITAR PRODUCTO</div><h1><?=h($product['name']??'Producto')?></h1><p class="sub">Nombre, imágenes, talles, colores, stock y publicación. Todo en este editor.</p><span class="flag"><?=h($product['status']==='active'?'Publicado':'Borrador / no publicado')?></span><span class="flag <?=$hasPhoto?'good':''?>"><?=$hasPhoto?'Foto cargada':'Falta foto disponible'?></span><span class="flag <?=$available?'good':''?>"><?=$available?'Variantes disponibles: '.$available:'Sin variantes disponibles'?></span></div><a class="btn light" href="/" target="_blank" rel="noopener">Ver tienda ↗</a></div>
 <?php if($error):?><div class="err"><?=h($error)?></div><?php endif;?><?php if($notice):?><div class="notice"><?=h($notice)?></div><?php endif;?>
