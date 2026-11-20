@@ -21,7 +21,7 @@ try{
 <main class="content"><div class="fashion-shell">
 <header><div>InYou Studio <small style="color:#8a807b">· Panel de tu tienda</small></div><form method="post" action="/admin/logout.php"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><button class="signout">Cerrar sesión</button></form></header>
 <div class="fashion-page-top"><div><span class="fashion-kicker">TU TIENDA · RESUMEN</span><h1>Tu tienda, de un vistazo.</h1><p>Todo lo importante para administrar tus prendas, sin complicaciones.</p></div>
-<?php if(canManageCatalog()):?><a class="fashion-btn" href="/admin/products.php?new=1">＋ Cargar nueva prenda</a><?php endif;?></div>
+<?php if(canManageCatalog()):?><a class="fashion-btn" href="/admin/product-workspace.php?new=1">＋ Cargar nueva prenda</a><?php endif;?></div>
 <?php if($dbError):?><div class="fashion-alert" role="alert">No pudimos cargar todos los datos de tu tienda. Intentá actualizar la página.</div><?php endif;?>
 <div class="fashion-summary">
 <a class="fashion-metric" href="/admin/products.php?estado=active" style="text-decoration:none;color:inherit"><span>Prendas publicadas</span><strong><?=(int)$stats['active']?></strong><small>Visibles en la tienda</small></a>
@@ -30,7 +30,7 @@ try{
 <a class="fashion-metric" href="/admin/collections.php" style="text-decoration:none;color:inherit"><span>Colecciones</span><strong><?=(int)$stats['collections']?></strong><small>Familias de prendas activas</small></a>
 </div>
 <section class="studio-section"><div class="studio-section-head"><h2>¿Qué querés hacer hoy?</h2><p>Accesos rápidos para gestionar tu tienda.</p></div><div class="studio-actions">
-<a href="/admin/products.php?new=1" class="studio-action"><span class="studio-action-icon">＋</span><strong>Cargar prenda</strong><small>Nombre, precio, fotos y talles</small><span class="studio-action-arrow">→</span></a>
+<a href="/admin/product-workspace.php?new=1" class="studio-action"><span class="studio-action-icon">＋</span><strong>Cargar prenda</strong><small>Nombre, precio, fotos y talles</small><span class="studio-action-arrow">→</span></a>
 <a href="/admin/products.php" class="studio-action"><span class="studio-action-icon">▣</span><strong>Mis prendas</strong><small>Editar o publicar productos</small><span class="studio-action-arrow">→</span></a>
 <a href="/admin/inventory.php" class="studio-action"><span class="studio-action-icon">◈</span><strong>Stock y talles</strong><small>Consultar disponibilidad</small><span class="studio-action-arrow">→</span></a>
 <a href="/admin/collections.php" class="studio-action"><span class="studio-action-icon">◎</span><strong>Colecciones</strong><small>Organizar el catálogo</small><span class="studio-action-arrow">→</span></a>
