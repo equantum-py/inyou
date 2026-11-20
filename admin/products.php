@@ -62,7 +62,7 @@ try{
 }catch(Throwable $e){if($pdo&&$pdo->inTransaction())$pdo->rollBack();error_log('InYou productos: '.$e->getMessage());$error=$e instanceof PDOException?'No se pudo completar la operación en MySQL.':$e->getMessage();}
 ?>
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Productos · InYou</title><link rel="stylesheet" href="/admin/style.css"></head>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Productos · InYou</title><link rel="stylesheet" href="/admin/style.css"><link rel="stylesheet" href="/admin/fashion-admin.css?v=2"></head>
 <body class="dashboard fashion-admin">
 <?php adminSidebar('products');?>
 <main class="content"><div class="catalog-manager">
