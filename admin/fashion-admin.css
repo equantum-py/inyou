@@ -174,3 +174,73 @@ body.dashboard .fashion-card-actions .fashion-restore-btn{width:100%;min-height:
 body.dashboard .fashion-card-actions .fashion-delete-btn{color:#9c2937!important;background:#fff5f5!important;border:1px solid #e7bcc4!important}
 body.dashboard .fashion-card-actions .fashion-delete-btn:hover{background:#fce6e9!important}
 body.dashboard .fashion-card-actions .fashion-restore-btn{color:#24654a!important;background:#eaf4ef!important;border:1px solid #cae1d5!important}
+
+/* Product Studio · una sola pantalla de trabajo, inspirada en edición ecommerce */
+body.dashboard .studio-editor-layout,body.dashboard .studio-new-editor{
+ display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,300px);gap:20px;align-items:start;width:100%;min-width:0
+}
+body.dashboard .studio-editor-primary,body.dashboard .studio-new-main{min-width:0}
+body.dashboard .studio-editor-aside,body.dashboard .studio-new-side{min-width:0;position:sticky;top:22px}
+body.dashboard .studio-editor-primary .quick-nav{position:static!important;margin:0 0 13px!important;background:transparent!important;border-bottom:0!important;backdrop-filter:none!important;flex-wrap:wrap;overflow:visible!important;padding:0!important}
+body.dashboard .studio-editor-primary .quick-nav a{white-space:nowrap;font-size:12px}
+body.dashboard .studio-editor-primary section.block{margin:0 0 17px;padding:23px}
+body.dashboard .studio-editor-aside .status-toolbar{display:block!important;padding:18px!important;margin:0 0 14px!important;border-radius:15px!important}
+body.dashboard .studio-editor-aside .status-overview{margin-bottom:14px}
+body.dashboard .studio-editor-aside .status-actions{display:grid;grid-template-columns:1fr!important;gap:8px;width:100%}
+body.dashboard .studio-editor-aside .status-actions form{width:100%!important;margin:0}
+body.dashboard .studio-editor-aside .status-actions button{width:100%;min-height:44px}
+body.dashboard .studio-editor-aside section.block{margin:0;padding:19px!important;border-radius:15px!important}
+body.dashboard .studio-editor-aside .section-head{display:block}
+body.dashboard .studio-editor-aside .section-head .flag{margin-top:12px}
+body.dashboard .studio-editor-aside .status-requirement{background:#fff6ec;border:1px solid #eddacc;border-radius:10px;padding:11px;font-size:12px;margin:0 0 14px}
+body.dashboard .studio-editor-aside .state-quiet{font-size:12px;color:#675b54}
+body.dashboard .studio-product-new h1{font-size:clamp(30px,4vw,44px);margin:9px 0}
+body.dashboard .studio-product-new .studio-new-main section.block,body.dashboard .studio-new-side section.block{margin:18px 0;border-radius:16px}
+body.dashboard .studio-product-new .studio-new-main .caption{display:block;margin:15px 0 7px;font-weight:700;font-size:12px}
+body.dashboard .studio-product-new .studio-new-main .fields .caption{margin-top:0}
+body.dashboard .studio-product-new .studio-new-main :is(input,textarea,select){width:100%;border:1px solid #e1d8d2;border-radius:10px;padding:12px;min-height:45px;background:white;font:inherit;font-size:14px}
+body.dashboard .studio-product-new .studio-new-main textarea{min-height:135px}
+body.dashboard .studio-product-new .studio-new-main .fields{margin-top:17px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+body.dashboard .studio-product-new .studio-new-side h3{font-size:14px;margin:20px 0 7px}
+body.dashboard .studio-product-new .studio-new-side .hint{font-size:12px;line-height:1.6}
+body.dashboard .studio-editor-primary .photo-grid{grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:10px}
+body.dashboard .studio-editor-primary .photo img{height:165px;object-fit:contain}
+body.dashboard .studio-editor-primary .upload-row{grid-template-columns:minmax(0,1fr) auto}
+body.dashboard .studio-editor-primary .variant-table{min-width:0;width:100%}
+body.dashboard .studio-editor-primary .variant-table th:nth-child(3),body.dashboard .studio-editor-primary .variant-table td:nth-child(3){display:table-cell}
+body.dashboard .studio-editor-primary .variant-table td input[type=number]{width:100%;max-width:120px}
+body.dashboard .studio-editor-primary .savebar{justify-content:flex-end}
+@media(max-width:1100px){
+ body.dashboard .studio-editor-layout,body.dashboard .studio-new-editor{grid-template-columns:minmax(0,1fr) minmax(220px,265px);gap:12px}
+ body.dashboard .studio-editor-primary section.block{padding:17px}
+ body.dashboard .studio-editor-primary .variant-table td{padding:10px 4px!important}
+}
+@media(max-width:850px){
+ body.dashboard .studio-editor-layout,body.dashboard .studio-new-editor{display:flex;flex-direction:column;gap:0}
+ body.dashboard .studio-editor-primary,body.dashboard .studio-new-main{width:100%;order:1}
+ body.dashboard .studio-editor-aside,body.dashboard .studio-new-side{position:static;width:100%;order:0}
+ body.dashboard .studio-editor-aside .status-toolbar{margin:9px 0!important}
+ body.dashboard .studio-editor-aside section.block{margin-bottom:15px}
+ body.dashboard .studio-editor-aside .status-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.dashboard .studio-editor-primary .quick-nav{display:flex!important;flex-wrap:nowrap;overflow-x:auto!important;max-width:100%;scrollbar-width:none}
+ body.dashboard .studio-editor-primary .variant-table{display:block!important}
+ body.dashboard .studio-editor-primary .variant-table thead{display:none!important}
+ body.dashboard .studio-editor-primary .variant-table tbody{display:grid!important;gap:10px}
+ body.dashboard .studio-editor-primary .variant-table tbody tr{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:13px;border:1px solid #e9e2db;border-radius:12px}
+ body.dashboard .studio-editor-primary .variant-table td{display:flex!important;flex-direction:column;gap:6px;border:0!important;padding:4px!important;min-width:0}
+ body.dashboard .studio-editor-primary .variant-table td:nth-child(3){display:flex!important}
+ body.dashboard .studio-editor-primary .variant-table td:first-child{grid-column:1/-1;padding-bottom:9px!important;border-bottom:1px solid #f1e9e4!important}
+ body.dashboard .studio-editor-primary .variant-table td:not(:first-child):before{content:attr(data-label);font-size:10px;color:#887a75;font-weight:700}
+ body.dashboard .studio-editor-primary .variant-table td input[type=number]{max-width:100%;width:100%}
+ body.dashboard .studio-editor-primary .variant-table td input[type=checkbox]{width:23px;height:23px}
+}
+@media(max-width:520px){
+ body.dashboard .studio-editor-aside .status-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body.dashboard .studio-editor-primary section.block{padding:15px}
+ body.dashboard .studio-product-new .studio-new-main .fields{grid-template-columns:1fr}
+ body.dashboard .studio-editor-primary .upload-row{grid-template-columns:1fr}
+ body.dashboard .studio-editor-primary .upload-row button{width:100%}
+ body.dashboard .studio-editor-primary .variant-table tbody tr{grid-template-columns:repeat(2,minmax(0,1fr))}
+ body.dashboard .studio-editor-primary .variant-table td:first-child{grid-column:1/-1}
+ body.dashboard .studio-editor-primary .variant-table td:nth-child(4){grid-column:2;align-items:flex-start}
+}
