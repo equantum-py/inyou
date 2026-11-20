@@ -25,7 +25,7 @@ function inyouStorageSecret(): string {
 }
 
 function inyouStorageIsPath(string $path): bool {
-    return (bool) preg_match('~^supabase/products/p[0-9]+-[a-f0-9]{32}\\.(jpg|png|webp)$~D', $path);
+    return (bool) preg_match('~^supabase/(?:products/p[0-9]+|site/[a-z0-9_-]+-(?:desktop|mobile))-[a-f0-9]{32}\\.(jpg|png|webp)$~D', $path);
 }
 
 function inyouStoragePublicUrl(string $path): string {
