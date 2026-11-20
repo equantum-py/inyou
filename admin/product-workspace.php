@@ -253,29 +253,111 @@ $readyToPublish=$hasPhoto&&$available>0&&$hasCollection&&(int)($product['base_pr
 <main class="content"><div class="workspace"><header><a href="/admin/products.php" style="text-decoration:none;color:#6a6862">← Volver a productos</a><span style="font-size:12px;color:#777">InYou Studio · Editor de prendas</span></header>
 <?php if($isNew):?>
 <div class="studio-product-new">
-  <div class="fashion-kicker">CATÁLOGO / NUEVA PRENDA</div>
-  <h1>Agregar prenda</h1>
-  <p class="sub">Completá los datos básicos y continuá acá mismo con fotografías, talles, colores y publicación.</p>
-  <?php if($error):?><div class="err" role="alert"><?=h($error)?></div><?php endif;?>
-  <div class="studio-new-editor">
-    <div class="studio-new-main">
-      <section class="block"><h2>Información de la prenda</h2>
-      <form method="post" id="studio-create-form">
-      <input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="create">
-      <label class="caption" for="new-name">Nombre de la prenda *</label><input id="new-name" type="text" name="name" maxlength="200" placeholder="Ej.: Remera oversize rosa" required>
-      <label class="caption" for="new-desc">Descripción</label><textarea id="new-desc" name="description" placeholder="Materiales, estilo, cuidados y detalles"></textarea>
-      <div class="fields">
-      <div><label class="caption" for="new-price">Precio en G. *</label><input id="new-price" type="number" min="1" name="base_price" placeholder="Ej.: 85000" required></div>
-      <div><label class="caption" for="new-coll">Colección *</label><select id="new-coll" name="collection_id" required><option value="">Elegir colección</option><?php foreach($collections as $c):?><option value="<?=(int)$c['id']?>"><?=h($c['name'])?></option><?php endforeach;?></select></div>
-      <div><label class="caption" for="new-type">Tipo</label><select id="new-type" name="product_type"><option value="remera">Remera</option><option value="kepi">Kepi</option></select></div>
-      <div><label class="caption" for="new-aud">Para quién</label><select id="new-aud" name="audience"><option>Mujer</option><option>Hombre</option><option selected>Unisex</option></select></div>
-      <div><label class="caption" for="new-fit">Corte</label><select id="new-fit" name="fit"><option value="">Sin definir</option><option>Regular</option><option>Oversize</option><option>Cropped</option><option>Único</option></select></div>
-      </div><div class="savebar"><button class="btn" type="submit">Guardar borrador y continuar →</button></div></form>
-      </section>
+ <div class="fashion-kicker">CATÁLOGO / NUEVA PRENDA</div>
+ <h1>Agregar prenda</h1>
+ <p class="sub">Toda la carga en esta pantalla. Elegí tus fotos, talles, colores y stock. Guardá una sola vez al terminar.</p>
+ <?php if($error):?><div class="err" role="alert"><?=h($error)?></div><?php endif;?>
+ <form method="post" enctype="multipart/form-data" id="studio-create-form">
+ <input type="hidden" name="csrf" value="<?=h(csrf())?>">
+ <input type="hidden" name="action" value="create">
+ <div class="studio-new-editor">
+  <div class="studio-new-main">
+   <section class="block" id="nueva-info"><h2>Información de la prenda</h2>
+    <label class="caption" for="new-name">Nombre de la prenda *</label>
+    <input id="new-name" type="text" name="name" maxlength="200" required placeholder="Ej.: Remera oversize rosa" value="<?=h((string)($_POST['name']??''))?>">
+    <label class="caption" for="new-desc">Descripción</label>
+    <textarea id="new-desc" name="description" placeholder="Material, estilo, cuidados y detalles"><?=h((string)($_POST['description']??''))?></textarea>
+    <div class="fields">
+     <div><label class="caption" for="new-price">Precio en G. *</label><input id="new-price" type="number" min="1" name="base_price" required placeholder="Ej.: 85000" value="<?=h((string)($_POST['base_price']??''))?>"></div>
+     <div><label class="caption" for="new-coll">Colección *</label><select id="new-coll" name="collection_id" required><option value="">Elegir colección</option><?php foreach($collections as $c):?><option value="<?=(int)$c['id']?>" <?=((int)($_POST['collection_id']??0)===(int)$c['id'])?'selected':''?>><?=h($c['name'])?></option><?php endforeach;?></select></div>
+     <div><label class="caption" for="new-type">Tipo</label><select id="new-type" name="product_type"><option value="remera">Remera</option><option value="kepi">Kepi</option></select></div>
+     <div><label class="caption" for="new-aud">Para quién</label><select id="new-aud" name="audience"><option>Mujer</option><option>Hombre</option><option selected>Unisex</option></select></div>
+     <div><label class="caption" for="new-fit">Corte</label><select id="new-fit" name="fit"><option value="">Sin definir</option><option>Regular</option><option>Oversize</option><option>Cropped</option><option>Único</option></select></div>
     </div>
-    <aside class="studio-new-side"><section class="block"><h2>Publicación</h2><span class="flag">Borrador</span><p class="hint">La prenda no aparece en la tienda hasta que agregues fotografías y talles disponibles y la publiques.</p><h3>Todo en una página</h3><p class="hint">Después de crear el borrador, vas a completar las fotos, variantes y stock aquí, sin volver al catálogo.</p></section></aside>
+   </section>
+   <section class="block" id="nueva-fotos">
+    <h2>Fotografías</h2><p class="hint">Elegí las fotos ahora. Podés seleccionar varias a la vez; la primera será la principal.</p>
+    <label class="studio-dropzone" for="new-images"><span class="studio-drop-icon" aria-hidden="true">＋</span><strong>Seleccionar fotografías</strong><small>JPG, PNG o WEBP · máximo 8 imágenes · 10 MB cada una</small></label>
+    <input id="new-images" type="file" name="images[]" accept="image/jpeg,image/png,image/webp" multiple>
+    <div id="studio-image-preview" class="studio-image-preview" aria-live="polite"></div>
+   </section>
+   <section class="block" id="nueva-talles">
+    <div class="section-head"><div><h2>Talles, colores y stock</h2><p class="hint">Agregá todas las combinaciones que vas a vender. Podés dejar stock en 0 mientras completás el catálogo.</p></div></div>
+    <div class="studio-variant-head"><span>Talle</span><span>Color</span><span>Stock</span><span>Precio especial</span><span>Vender</span><span></span></div>
+    <div id="studio-new-variants" class="studio-new-variants"></div>
+    <button type="button" class="btn light studio-add-variant" id="studio-add-variant">＋ Agregar talle y color</button>
+    <template id="studio-variant-template"><div class="studio-variant-line">
+     <label><span>Talle</span><select data-field="size_id" required><option value="">Elegir</option><?php foreach($sizes as $sz):?><option value="<?=(int)$sz['id']?>"><?=h($sz['label'])?></option><?php endforeach;?></select></label>
+     <label><span>Color</span><input data-field="color" type="text" maxlength="45" required placeholder="Ej.: Negro"></label>
+     <label><span>Stock</span><input data-field="stock" type="number" min="0" max="99999999" value="0" required></label>
+     <label><span>Precio especial</span><input data-field="price" type="number" min="1" placeholder="Precio base"></label>
+     <label class="studio-active-choice"><span>Vender</span><input data-field="active" type="checkbox" value="1" checked></label>
+     <button type="button" class="studio-remove-variant" title="Quitar combinación" aria-label="Quitar combinación">✕</button>
+    </div></template>
+   </section>
   </div>
+  <aside class="studio-new-side">
+   <section class="block"><h2>Publicación</h2>
+    <label class="caption" for="new-status">Estado al guardar</label>
+    <select id="new-status" name="status">
+     <option value="draft" selected>Borrador · No visible en la tienda</option>
+     <option value="active">Publicado · Visible en la tienda</option>
+    </select>
+    <p class="hint" id="studio-publish-help">Podés guardar un borrador aunque todavía falten fotografías o stock. Para publicar, completá al menos una imagen y una variante activa con stock.</p>
+    <button type="submit" class="btn studio-submit" id="studio-submit">Guardar prenda</button>
+    <p class="hint studio-save-note">Se guardarán los datos, fotografías, talles, colores, stock y estado en una sola operación.</p>
+   </section>
+  </aside>
+ </div>
+ </form>
 </div>
+<script>
+(function(){
+ const form=document.getElementById('studio-create-form');
+ if(!form)return;
+ const target=document.getElementById('studio-new-variants');
+ const template=document.getElementById('studio-variant-template');
+ const photos=document.getElementById('new-images');
+ const preview=document.getElementById('studio-image-preview');
+ const status=document.getElementById('new-status');
+ const help=document.getElementById('studio-publish-help');
+ let next=0,urls=[];
+ function add(){
+  if(target.children.length>=50)return;
+  const fragment=template.content.cloneNode(true);
+  const row=fragment.querySelector('.studio-variant-line');
+  const idx=next++;
+  row.querySelectorAll('[data-field]').forEach(input=>input.name='new_variants['+idx+']['+input.dataset.field+']');
+  row.querySelector('.studio-remove-variant').addEventListener('click',()=>row.remove());
+  target.append(row);
+ }
+ document.getElementById('studio-add-variant').addEventListener('click',add);
+ function renderPhotos(){
+  urls.forEach(URL.revokeObjectURL);urls=[];
+  preview.replaceChildren();
+  const files=Array.from(photos.files||[]);
+  if(files.length>8){photos.value='';alert('Seleccioná como máximo 8 fotografías.');return;}
+  files.forEach((file,index)=>{
+   if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>10*1024*1024){photos.value='';preview.replaceChildren();alert('Usá JPG, PNG o WEBP, con máximo 10 MB por foto.');return;}
+   const figure=document.createElement('figure');
+   const img=document.createElement('img');
+   const url=URL.createObjectURL(file);urls.push(url);img.src=url;img.alt=file.name;
+   const caption=document.createElement('figcaption');
+   caption.textContent=index===0?'Principal':'Foto '+(index+1);
+   figure.append(img,caption);preview.append(figure);
+  });
+ }
+ photos.addEventListener('change',renderPhotos);
+ status.addEventListener('change',()=>{help.textContent=status.value==='active'?'Para publicar ahora necesitás una foto y un talle/color activo con stock.':'Podés guardar como borrador aunque todavía no hayas cargado fotos o stock.';});
+ form.addEventListener('submit',e=>{
+  if(status.value!=='active')return;
+  const hasPhoto=photos.files&&photos.files.length>0;
+  const sellable=Array.from(target.querySelectorAll('.studio-variant-line')).some(row=>Number(row.querySelector('[data-field="stock"]').value)>0&&row.querySelector('[data-field="active"]').checked&&row.querySelector('[data-field="size_id"]').value&&row.querySelector('[data-field="color"]').value.trim());
+  if(!hasPhoto||!sellable){e.preventDefault();alert('Para publicar agregá al menos una foto y una combinación de talle/color con stock. O guardá como borrador.');}
+ });
+ add();
+})();
+</script>
 <?php else:?>
 <div class="workspace-top"><div><div class="eyebrow">EDITAR PRODUCTO</div><h1><?=h($product['name']??'Producto')?></h1><p class="sub">Nombre, imágenes, talles, colores, stock y publicación. Todo en este editor.</p><span class="flag"><?=h($product['status']==='active'?'Publicado':'Borrador / no publicado')?></span><span class="flag <?=$hasPhoto?'good':''?>"><?=$hasPhoto?'Foto cargada':'Falta foto disponible'?></span><span class="flag <?=$available?'good':''?>"><?=$available?'Variantes disponibles: '.$available:'Sin variantes disponibles'?></span></div><a class="btn light" href="/" target="_blank" rel="noopener">Ver tienda ↗</a></div>
 <?php if($error):?><div class="err"><?=h($error)?></div><?php endif;?><?php if($notice):?><div class="notice"><?=h($notice)?></div><?php endif;?>
