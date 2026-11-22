@@ -160,30 +160,47 @@ try{
 </style>
 </head><body class="dashboard"><?php adminSidebar('visuals');?>
 <main class="content"><div class="site-images-shell"><header><div>InYou Studio · Apariencia de la tienda</div><a class="btn light" href="/" target="_blank" rel="noopener">Ver tienda ↗</a></header>
-<span class="eyebrow">CONTENIDO VISUAL</span><h1>Imágenes de la tienda</h1>
+<span class="eyebrow">CONTENIDO VISUAL</span><h1>Diseño de la tienda</h1>
+<p class="site-image-intro">Elegí qué querés editar. No necesitás recorrer todos los banners para cambiar uno.</p>
+<nav class="site-visual-tabs" aria-label="Secciones de imágenes de la tienda">
+<button type="button" data-visual-tab="banners" class="is-current" aria-current="page">Banners principales</button>
+<button type="button" data-visual-tab="categories">Categorías</button>
+<button type="button" data-visual-tab="collections">Colecciones</button>
+<button type="button" data-visual-tab="editorial">Campañas y looks</button>
+</nav>
 <p class="site-image-intro">Cambiá el banner principal, las fotos de categorías, las colecciones y las campañas desde aquí. Cada espacio admite una foto para notebook y otra para celular.</p>
 <div class="site-image-note">Tamaños recomendados en píxeles. Usá JPG o WEBP. El sistema optimiza automáticamente las imágenes grandes antes de subirlas. <strong>Primero elegí el archivo y después hacé clic en Guardar imagen.</strong> Si no cargás una foto mobile, se usa la imagen desktop. Si no cargás ninguna, se conserva la imagen actual de la web. Los cambios no modifican las fotos de los productos.</div>
 <?php if($error):?><div class="site-message error" role="alert"><?=h($error)?></div><?php endif;?>
 <?php if($notice):?><div class="site-message" role="status"><?=h($notice)?></div><?php endif;?>
 
-<section class="site-carousel-admin" id="carousel">
+<section class="site-carousel-admin" id="carousel" data-visual-panel="banners">
  <div class="site-carousel-title">
-  <div><h2>Carrusel principal</h2><p>Podés agregar hasta 6 banners. Cargá las imágenes desktop y mobile de cada uno; el orden es el mismo en ambos dispositivos.</p></div>
+  <div><h2>Carrusel principal</h2><p>Agregá, activá o desactivá banners desde aquí. Para cambiar fotografías tocá «Editar imágenes».</p></div>
   <form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_add"><button type="submit" class="site-carousel-add" <?=count($heroSlides)>=6?'disabled':''?>>＋ Agregar banner</button></form>
  </div>
- <p class="site-carousel-help">Se muestran únicamente los banners activos y con imágenes. El carrusel cambia cada 5 segundos, tiene controles manuales y se detiene cuando el visitante interactúa.</p>
+ <p class="site-carousel-help">Usá el interruptor <strong>Activo / Desactivado</strong> para decidir qué se muestra en la tienda. Podés cambiar el orden con las flechas. Los banners activos cambian cada 5 segundos.</p>
  <div class="site-carousel-list">
  <?php foreach($heroSlides as $position=>$slide):?>
  <article class="site-carousel-slide" id="banner-<?=(int)$slide['id']?>">
   <div class="site-carousel-slide-top">
-   <div><strong>Banner <?=(int)$position+1?></strong><span class="site-slide-badge <?=$slide['active']?'is-active':''?>"><?=$slide['active']?'Activo':'Oculto'?></span></div>
+   <div><strong>Banner <?=(int)$position+1?></strong><span class="site-slide-badge <?=$slide['active']?'is-active':''?>"><?=$slide['active']?'Publicado':'Desactivado'?></span></div>
    <div class="site-carousel-tools">
     <form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_up"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><button type="submit" title="Subir en el carrusel" aria-label="Mover banner hacia arriba" <?=$position===0?'disabled':''?>>↑</button></form>
     <form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_down"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><button type="submit" title="Bajar en el carrusel" aria-label="Mover banner hacia abajo" <?=$position===count($heroSlides)-1?'disabled':''?>>↓</button></form>
-    <form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_toggle"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><button type="submit"><?=$slide['active']?'Ocultar':'Activar'?></button></form>
+    <form method="post" class="site-carousel-status-form" aria-label="Estado del banner <?=(int)$position+1?>">
+     <input type="hidden" name="csrf" value="<?=h(csrf())?>">
+     <input type="hidden" name="action" value="slide_toggle">
+     <input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>">
+     <button type="submit" class="site-carousel-switch <?=$slide['active']?'is-on':''?>" role="switch" aria-checked="<?=$slide['active']?'true':'false'?>" aria-label="<?=$slide['active']?'Desactivar':'Activar'?> banner <?=(int)$position+1?>" title="Hacé clic para <?=$slide['active']?'desactivar':'activar'?> el banner">
+       <span class="site-switch-track" aria-hidden="true"><span></span></span>
+       <span><?=$slide['active']?'Activo':'Desactivado'?></span>
+     </button>
+    </form>
     <?php if($slide['id']!==0):?><form method="post" onsubmit="return confirm('¿Quitar este banner del carrusel? Las fotos guardadas no se borrarán de Supabase.')"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_remove"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><button type="submit" class="site-slide-remove">Quitar</button></form><?php endif;?>
    </div>
   </div>
+  <details class="site-carousel-edit" <?=$position===0?'open':''?>>
+   <summary>Editar imágenes desktop y mobile <span aria-hidden="true">▾</span></summary>
   <div class="site-image-sizes">
    <?php foreach(['desktop'=>'Desktop / notebook','mobile'=>'Mobile / celular'] as $device=>$label):?>
    <div class="site-image-device">
@@ -208,14 +225,15 @@ try{
    </div>
    <?php endforeach;?>
   </div>
+  </details>
  </article>
  <?php endforeach;?>
  </div>
 </section>
 
-<div class="site-image-grid">
+<div class="site-image-grid" id="site-visual-grid">
 <?php foreach($slots as $slot=>$meta):if($slot==='hero')continue;?>
-<section class="site-image-card" id="slot-<?=h($slot)?>"><h2><?=h($meta[0])?></h2><p>Proporción recomendada: <?=h($meta[3])?></p><div class="site-image-sizes">
+<section class="site-image-card" data-visual-group="<?=str_starts_with($slot,'category_')?'categories':(str_starts_with($slot,'collection_')?'collections':'editorial')?>" id="slot-<?=h($slot)?>"><h2><?=h($meta[0])?></h2><p>Proporción recomendada: <?=h($meta[3])?></p><div class="site-image-sizes">
 <?php foreach(['desktop'=>'Notebook / desktop','mobile'=>'Celular / mobile'] as $device=>$label):?>
 <div class="site-image-device"><h3><?=h($label)?></h3><small><?=h($device==='desktop'?$meta[1]:$meta[2])?> px</small>
 <div class="site-image-preview"><?php if(!empty($images[$slot][$device]['url'])):?><img src="<?=h($images[$slot][$device]['url'])?>" loading="lazy" alt="<?=h($meta[0].' '.$label)?>"><?php else:?><span>Sin imagen personalizada</span><?php endif;?></div>
@@ -226,4 +244,4 @@ try{
 <?php if(!empty($images[$slot][$device])):?><form method="post" onsubmit="return confirm('¿Restablecer esta imagen? Volverá a la imagen predeterminada.')"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="reset"><input type="hidden" name="slot" value="<?=h($slot)?>"><input type="hidden" name="device" value="<?=h($device)?>"><button class="site-reset" type="submit">Restablecer imagen</button></form><?php endif;?>
 </div><?php endforeach;?></div></section>
 <?php endforeach;?>
-</div></div></main><script defer src="/admin/site-image-upload.js?v=2"></script></body></html>
+</div></div></main><script defer src="/admin/site-image-upload.js?v=2"></script><script defer src="/admin/site-visual-tabs.js?v=1"></script></body></html>
