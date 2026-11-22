@@ -81,6 +81,18 @@ try{
 .site-image-device form{display:grid;gap:9px}.site-image-device input[type=file]{width:100%;font-size:11px;min-width:0}
 .site-image-device button{min-height:42px;border:0;background:#70081e;color:white;border-radius:9px;padding:10px;font-size:12px;font-weight:700;cursor:pointer}
 .site-image-device .site-reset{border:1px solid #e5d9d4;color:#745b56;background:#fff}
+.site-file-picker{display:flex;align-items:center;justify-content:center;min-height:46px;padding:9px 12px;border:1px dashed #a96d79;background:#faf5f6;color:#70081e;border-radius:9px;cursor:pointer;font-size:12px;font-weight:700}
+.site-file-picker:focus-within{outline:3px solid #d6aab4;outline-offset:2px}
+.site-file-picker input[type=file]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
+.site-file-feedback{font-size:11px;color:#776965;margin:0;min-height:30px;overflow-wrap:anywhere}
+.site-file-feedback.error,.site-upload-notice{color:#a52f40}
+.site-upload-notice{font-size:11px;margin:0}
+.site-upload-form button[type=submit]:disabled{opacity:.52;cursor:not-allowed}
+.site-image-card[id="slot-hero"] .site-image-device:first-child .site-image-preview{aspect-ratio:1920 / 450}
+.site-image-card[id="slot-hero"] .site-image-device:nth-child(2) .site-image-preview{aspect-ratio:750 / 507}
+.site-image-card[id="slot-hero"]{grid-column:1 / -1}
+.site-image-card[id="slot-hero"] .site-image-preview img{object-fit:contain}
+
 .site-message{padding:13px 17px;border-radius:11px;background:#e8f3e9;color:#326846;margin:14px 0}.site-message.error{background:#fbe9e7;color:#8c3b2c}
 .site-image-note{background:#fff9f3;border:1px solid #efe2d7;border-radius:12px;padding:14px;font-size:12px;color:#705d53;margin:12px 0}
 @media(max-width:900px){.site-image-grid{grid-template-columns:1fr}}
@@ -99,8 +111,11 @@ try{
 <?php foreach(['desktop'=>'Notebook / desktop','mobile'=>'Celular / mobile'] as $device=>$label):?>
 <div class="site-image-device"><h3><?=h($label)?></h3><small><?=h($device==='desktop'?$meta[1]:$meta[2])?> px</small>
 <div class="site-image-preview"><?php if(!empty($images[$slot][$device]['url'])):?><img src="<?=h($images[$slot][$device]['url'])?>" loading="lazy" alt="<?=h($meta[0].' '.$label)?>"><?php else:?><span>Sin imagen personalizada</span><?php endif;?></div>
-<form method="post" enctype="multipart/form-data"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="upload"><input type="hidden" name="slot" value="<?=h($slot)?>"><input type="hidden" name="device" value="<?=h($device)?>"><input type="file" name="image" accept="image/jpeg,image/png,image/webp" aria-label="Imagen <?=h($meta[0].' '.$label)?>" required><button type="submit">Guardar imagen</button></form>
+<form class="site-upload-form" method="post" enctype="multipart/form-data"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="upload"><input type="hidden" name="slot" value="<?=h($slot)?>"><input type="hidden" name="device" value="<?=h($device)?>">
+<label class="site-file-picker">＋ Seleccionar imagen <input type="file" name="image" accept="image/jpeg,image/png,image/webp" aria-label="Seleccionar imagen de <?=h($meta[0].' '.$label)?>" required></label>
+<p class="site-file-feedback" role="status" aria-live="polite">Elegí una foto para ver su vista previa.</p><p class="site-upload-notice" role="alert" aria-live="polite"></p>
+<button type="submit" disabled>Guardar imagen</button></form>
 <?php if(!empty($images[$slot][$device])):?><form method="post" onsubmit="return confirm('¿Restablecer esta imagen? Volverá a la imagen predeterminada.')"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="reset"><input type="hidden" name="slot" value="<?=h($slot)?>"><input type="hidden" name="device" value="<?=h($device)?>"><button class="site-reset" type="submit">Restablecer imagen</button></form><?php endif;?>
 </div><?php endforeach;?></div></section>
 <?php endforeach;?>
-</div></div></main></body></html>
+</div></div></main><script defer src="/admin/site-image-upload.js?v=1"></script></body></html>
