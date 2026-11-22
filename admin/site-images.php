@@ -95,7 +95,8 @@ try{
    $pdo->prepare('DELETE FROM settings WHERE `key`=?')->execute([$key]);
    auditLog($pdo,'site.image.reset','site',null,['slot'=>$slot,'device'=>$device]);
   }else{throw new RuntimeException('Acción no válida.');}
-  header('Location: /admin/site-images.php?saved=1#slot-'.rawurlencode($slot),true,303);exit;
+  $anchor=$slot==='hero'?'banner-'.$slideId:'slot-'.$slot;
+  header('Location: /admin/site-images.php?saved=1#'.rawurlencode($anchor),true,303);exit;
  }
  $images=inyouSiteImages($pdo);
  $heroSlides=inyouHeroImages($pdo,false);
