@@ -4,15 +4,51 @@ require __DIR__.'/bootstrap.php';
 require_once dirname(__DIR__).'/lib/inyou-site-visuals.php';
 requireAuth();
 if(!canManageCatalog()){http_response_code(403);exit('No autorizado.');}
-$error='';$notice='';$images=[];$slots=inyouSiteSlots();
+$error='';$notice='';$images=[];$heroSlides=[];$slots=inyouSiteSlots();
 try{
  $pdo=db();
  if($_SERVER['REQUEST_METHOD']==='POST'){
   if(!validCsrf()){http_response_code(403);throw new RuntimeException('La sesión venció. Recargá la página.');}
+  $action=(string)($_POST['action']??'');
+  if(in_array($action,['slide_add','slide_toggle','slide_up','slide_down','slide_remove'],true)){
+   $slides=inyouHeroOrder($pdo);
+   if($action==='slide_add'){
+    if(count($slides)>=6)throw new RuntimeException('Máximo 6 banners en el carrusel.');
+    $used=array_column($slides,'id');
+    for($newId=1;$newId<=5;$newId++)if(!in_array($newId,$used,true))break;
+    if($newId>5)throw new RuntimeException('No hay espacios libres para otro banner.');
+    // Al reutilizar un número, no reactivar fotos antiguas sin autorización.
+    $pdo->prepare('DELETE FROM settings WHERE `key` IN (?,?)')->execute([inyouHeroImageKey($newId,'desktop'),inyouHeroImageKey($newId,'mobile')]);
+    $slides[]=['id'=>$newId,'active'=>true];
+   }else{
+    $slideId=filter_var($_POST['slide_id']??null,FILTER_VALIDATE_INT,['options'=>['min_range'=>0,'max_range'=>5]]);
+    if($slideId===false)throw new RuntimeException('Identificador del banner no válido.');
+    $position=null;
+    foreach($slides as $index=>$row)if($row['id']===$slideId){$position=$index;break;}
+    if($position===null)throw new RuntimeException('Este banner ya no está disponible.');
+    if($action==='slide_toggle')$slides[$position]['active']=!$slides[$position]['active'];
+    if($action==='slide_up'&&$position>0){[$slides[$position-1],$slides[$position]]=[$slides[$position],$slides[$position-1]];}
+    if($action==='slide_down'&&$position<count($slides)-1){[$slides[$position+1],$slides[$position]]=[$slides[$position],$slides[$position+1]];}
+    if($action==='slide_remove'){
+     if($slideId===0)throw new RuntimeException('El banner original no se puede eliminar: podés desactivarlo.');
+     array_splice($slides,$position,1);
+    }
+   }
+   inyouHeroSaveOrder($pdo,$slides);
+   auditLog($pdo,'site.carousel.'.$action,'site',null);
+   header('Location: /admin/site-images.php?saved=1#carousel',true,303);exit;
+  }
   $slot=(string)($_POST['slot']??'');
   $device=(string)($_POST['device']??'');
-  $key=inyouSiteSettingKey($slot,$device);
-  $action=(string)($_POST['action']??'');
+  $slideId=filter_var($_POST['slide_id']??0,FILTER_VALIDATE_INT,['options'=>['min_range'=>0,'max_range'=>5]]);
+  if($slideId===false)throw new RuntimeException('Banner no válido.');
+  if($slot==='hero'){
+   if(!in_array($slideId,array_column(inyouHeroOrder($pdo),'id'),true))throw new RuntimeException('El banner no existe en el carrusel.');
+   $key=inyouHeroImageKey($slideId,$device);
+  }else{
+   if($slideId!==0)throw new RuntimeException('Sección de imagen no válida.');
+   $key=inyouSiteSettingKey($slot,$device);
+  }
   $current=$pdo->prepare('SELECT `value` FROM settings WHERE `key`=?');
   $current->execute([$key]);
   $oldPath=(string)($current->fetchColumn()?:'');
@@ -48,7 +84,7 @@ try{
    $dims=@getimagesize($tmp);
    if(!$dims||$dims[0]<1||$dims[1]<1||$dims[0]*$dims[1]>25000000)throw new RuntimeException('La imagen debe tener menos de 25 megapíxeles.');
    $bytes=file_get_contents($tmp);if($bytes===false)throw new RuntimeException('No se pudo leer la imagen.');
-   $newPath=inyouSiteImagePath($slot,$device).'.'.$ext;
+   $newPath=($slot==='hero'&&$slideId>0?'supabase/site/hero_'.$slideId.'-'.$device.'-'.bin2hex(random_bytes(16)):inyouSiteImagePath($slot,$device)).'.'.$ext;
    inyouStorageUpload($newPath,$bytes,$mime);
    try{
     $pdo->prepare('INSERT INTO settings (`key`,`value`) VALUES (?,?) ON DUPLICATE KEY UPDATE `value`=VALUES(`value`)')->execute([$key,$newPath]);
@@ -62,7 +98,8 @@ try{
   header('Location: /admin/site-images.php?saved=1#slot-'.rawurlencode($slot),true,303);exit;
  }
  $images=inyouSiteImages($pdo);
- if(isset($_GET['saved']))$notice='Imagen actualizada. La tienda usará la nueva fotografía sin redeploy.';
+ $heroSlides=inyouHeroImages($pdo,false);
+ if(isset($_GET['saved']))$notice='Cambios guardados. Los banners se actualizan en la tienda sin redeploy.';
 }catch(Throwable $e){
  error_log('InYou site images: '.$e->getMessage());
  $error=$e instanceof PDOException?'No se pudieron guardar las imágenes en MySQL.':$e->getMessage();
@@ -97,6 +134,28 @@ try{
 .site-image-note{background:#fff9f3;border:1px solid #efe2d7;border-radius:12px;padding:14px;font-size:12px;color:#705d53;margin:12px 0}
 @media(max-width:900px){.site-image-grid{grid-template-columns:1fr}}
 @media(max-width:520px){.site-image-card{padding:14px}.site-image-sizes{grid-template-columns:1fr}.site-image-preview{aspect-ratio:16/9}}
+
+.site-carousel-admin{background:white;border:1px solid #e7ded9;border-radius:16px;padding:23px;margin:24px 0}
+.site-carousel-title{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.site-carousel-title h2{font-size:23px;margin:0 0 6px}.site-carousel-title p,.site-carousel-help{font-size:12px;color:#82716c;margin:0;line-height:1.6}
+.site-carousel-help{margin:15px 0 20px}.site-carousel-add{border:0;background:#70081e;color:white;padding:13px 18px;border-radius:10px;font-weight:700;cursor:pointer}
+.site-carousel-add:disabled{opacity:.5;cursor:not-allowed}
+.site-carousel-list{display:grid;gap:16px}
+.site-carousel-slide{background:#fffcfa;border:1px solid #e9ded9;border-radius:14px;padding:17px;min-width:0}
+.site-carousel-slide-top{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding-bottom:15px}
+.site-carousel-slide-top>div:first-child{display:flex;align-items:center;gap:10px}
+.site-carousel-slide-top strong{font-size:17px}
+.site-slide-badge{display:inline-flex;align-items:center;background:#f4e9e5;color:#895f4d;border-radius:999px;padding:5px 9px;font-size:11px}
+.site-slide-badge.is-active{background:#e7f2e9;color:#306947}
+.site-carousel-tools{display:flex;align-items:center;flex-wrap:wrap;gap:7px}
+.site-carousel-tools button{min-height:40px;min-width:40px;background:#fff;border:1px solid #e9deda;border-radius:9px;padding:8px 11px;color:#70081e;font-size:12px;font-weight:700;cursor:pointer}
+.site-carousel-tools button:disabled{opacity:.35;cursor:not-allowed}
+.site-carousel-tools .site-slide-remove{color:#a83241;background:#fff5f5}
+.site-carousel-preview.desktop{aspect-ratio:1920/450}
+.site-carousel-preview.mobile{aspect-ratio:750/507}
+.site-carousel-preview img{object-fit:contain}
+.site-carousel-admin .site-image-device form.site-upload-form{margin-top:8px}
+@media(max-width:620px){.site-carousel-admin{padding:14px}.site-carousel-slide{padding:12px}.site-carousel-title>form{width:100%}.site-carousel-add{width:100%}.site-carousel-tools{width:100%}.site-carousel-preview.desktop{aspect-ratio:1920/450}}
 </style>
 </head><body class="dashboard"><?php adminSidebar('visuals');?>
 <main class="content"><div class="site-images-shell"><header><div>InYou Studio · Apariencia de la tienda</div><a class="btn light" href="/" target="_blank" rel="noopener">Ver tienda ↗</a></header>
@@ -105,8 +164,56 @@ try{
 <div class="site-image-note">Tamaños recomendados en píxeles. Usá JPG o WEBP. El sistema optimiza automáticamente las imágenes grandes antes de subirlas. <strong>Primero elegí el archivo y después hacé clic en Guardar imagen.</strong> Si no cargás una foto mobile, se usa la imagen desktop. Si no cargás ninguna, se conserva la imagen actual de la web. Los cambios no modifican las fotos de los productos.</div>
 <?php if($error):?><div class="site-message error" role="alert"><?=h($error)?></div><?php endif;?>
 <?php if($notice):?><div class="site-message" role="status"><?=h($notice)?></div><?php endif;?>
+
+<section class="site-carousel-admin" id="carousel">
+ <div class="site-carousel-title">
+  <div><h2>Carrusel principal</h2><p>Podés agregar hasta 6 banners. Cargá las imágenes desktop y mobile de cada uno; el orden es el mismo en ambos dispositivos.</p></div>
+  <form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_add"><button type="submit" class="site-carousel-add" <?=count($heroSlides)>=6?'disabled':''?>>＋ Agregar banner</button></form>
+ </div>
+ <p class="site-carousel-help">Se muestran únicamente los banners activos y con imágenes. El carrusel cambia cada 5 segundos, tiene controles manuales y se detiene cuando el visitante interactúa.</p>
+ <div class="site-carousel-list">
+ <?php foreach($heroSlides as $position=>$slide):?>
+ <article class="site-carousel-slide" id="banner-<?=(int)$slide['id']?>">
+  <div class="site-carousel-slide-top">
+   <div><strong>Banner <?=(int)$position+1?></strong><span class="site-slide-badge <?=$slide['active']?'is-active':''?>"><?=$slide['active']?'Activo':'Oculto'?></span></div>
+   <div class="site-carousel-tools">
+    <form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_up"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><button type="submit" title="Subir en el carrusel" aria-label="Mover banner hacia arriba" <?=$position===0?'disabled':''?>>↑</button></form>
+    <form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_down"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><button type="submit" title="Bajar en el carrusel" aria-label="Mover banner hacia abajo" <?=$position===count($heroSlides)-1?'disabled':''?>>↓</button></form>
+    <form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_toggle"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><button type="submit"><?=$slide['active']?'Ocultar':'Activar'?></button></form>
+    <?php if($slide['id']!==0):?><form method="post" onsubmit="return confirm('¿Quitar este banner del carrusel? Las fotos guardadas no se borrarán de Supabase.')"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_remove"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><button type="submit" class="site-slide-remove">Quitar</button></form><?php endif;?>
+   </div>
+  </div>
+  <div class="site-image-sizes">
+   <?php foreach(['desktop'=>'Desktop / notebook','mobile'=>'Mobile / celular'] as $device=>$label):?>
+   <div class="site-image-device">
+    <h3><?=h($label)?></h3><small><?=$device==='desktop'?'1920 × 450':'750 × 507'?> px</small>
+    <div class="site-image-preview site-carousel-preview <?=$device==='desktop'?'desktop':'mobile'?>">
+     <?php if(!empty($slide[$device]['url'])):?><img src="<?=h($slide[$device]['url'])?>" loading="lazy" alt="Vista previa banner <?=(int)$position+1?> <?=h($label)?>"><?php else:?><span>Sin imagen <?=h($device)?></span><?php endif;?>
+    </div>
+    <form class="site-upload-form" method="post" enctype="multipart/form-data">
+     <input type="hidden" name="csrf" value="<?=h(csrf())?>">
+     <input type="hidden" name="action" value="upload">
+     <input type="hidden" name="slot" value="hero">
+     <input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>">
+     <input type="hidden" name="device" value="<?=h($device)?>">
+     <label class="site-file-picker">＋ Seleccionar imagen <input type="file" name="image" accept="image/jpeg,image/png,image/webp" aria-label="Banner <?=(int)$position+1?> <?=h($label)?>" required></label>
+     <p class="site-file-feedback" role="status" aria-live="polite">Elegí una foto para verla antes de guardar.</p>
+     <p class="site-upload-notice" role="alert" aria-live="polite"></p>
+     <button type="submit" disabled>Guardar imagen</button>
+    </form>
+    <?php if(!empty($slide[$device]['path'])):?>
+    <form method="post" onsubmit="return confirm('¿Restablecer esta imagen del banner?')"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="reset"><input type="hidden" name="slot" value="hero"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><input type="hidden" name="device" value="<?=h($device)?>"><button type="submit" class="site-reset">Restablecer imagen</button></form>
+    <?php endif;?>
+   </div>
+   <?php endforeach;?>
+  </div>
+ </article>
+ <?php endforeach;?>
+ </div>
+</section>
+
 <div class="site-image-grid">
-<?php foreach($slots as $slot=>$meta):?>
+<?php foreach($slots as $slot=>$meta):if($slot==='hero')continue;?>
 <section class="site-image-card" id="slot-<?=h($slot)?>"><h2><?=h($meta[0])?></h2><p>Proporción recomendada: <?=h($meta[3])?></p><div class="site-image-sizes">
 <?php foreach(['desktop'=>'Notebook / desktop','mobile'=>'Celular / mobile'] as $device=>$label):?>
 <div class="site-image-device"><h3><?=h($label)?></h3><small><?=h($device==='desktop'?$meta[1]:$meta[2])?> px</small>
