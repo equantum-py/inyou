@@ -68,7 +68,7 @@
     }
     canvas.width=0;canvas.height=0;
     if(!blob||blob.size>safeUploadBytes)throw new Error('La imagen sigue pesando demasiado. Reducí el archivo a menos de 1,7 MB.');
-    const filename=file.name.replace(/\\.[^.]+$/,'')+'.webp';
+    const filename=file.name.replace(/\.[^.]+$/,'')+'.webp';
     return new File([blob],filename,{type:'image/webp',lastModified:Date.now()});
    }finally{bitmap.close();}
   }
