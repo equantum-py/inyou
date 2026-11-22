@@ -18,7 +18,27 @@ try{
   $oldPath=(string)($current->fetchColumn()?:'');
   if($action==='upload'){
    $file=$_FILES['image']??null;
-   if(!is_array($file)||(int)($file['error']??UPLOAD_ERR_NO_FILE)!==UPLOAD_ERR_OK)throw new RuntimeException('Seleccioná una imagen válida. Máximo 10 MB.');
+   if(!is_array($file)){
+    $length=(int)($_SERVER['CONTENT_LENGTH']??0);
+    error_log('InYou site-image upload missing: content_length='.$length.' post_max_size='.ini_get('post_max_size'));
+    throw new RuntimeException($length>0&&empty($_POST)
+      ?'El archivo supera el límite total del servidor ('.ini_get('post_max_size').'). Reducí su peso y volvé a intentar.'
+      :'Primero seleccioná una fotografía JPG, PNG o WEBP para este espacio.');
+   }
+   $uploadCode=(int)($file['error']??UPLOAD_ERR_NO_FILE);
+   if($uploadCode!==UPLOAD_ERR_OK){
+    $messages=[
+     UPLOAD_ERR_INI_SIZE=>'El archivo supera el límite del servidor ('.ini_get('upload_max_filesize').'). Reducí su tamaño.',
+     UPLOAD_ERR_FORM_SIZE=>'El archivo supera el límite permitido por el formulario.',
+     UPLOAD_ERR_PARTIAL=>'La imagen llegó incompleta. Comprobá tu conexión y volvé a intentar.',
+     UPLOAD_ERR_NO_FILE=>'No se seleccionó ninguna imagen. Tocá «Seleccionar archivo» antes de guardar.',
+     UPLOAD_ERR_NO_TMP_DIR=>'El servidor no tiene carpeta temporal de subida. Contactá al administrador.',
+     UPLOAD_ERR_CANT_WRITE=>'El servidor no pudo recibir la imagen. Intentá nuevamente.',
+     UPLOAD_ERR_EXTENSION=>'PHP bloqueó la carga de la imagen.'
+    ];
+    error_log('InYou site-image upload error='.$uploadCode.' max_file='.ini_get('upload_max_filesize').' max_post='.ini_get('post_max_size'));
+    throw new RuntimeException($messages[$uploadCode]??'No se pudo recibir el archivo (código '.$uploadCode.').');
+   }
    $tmp=(string)($file['tmp_name']??'');
    $bytesCount=(int)($file['size']??0);
    if($bytesCount<1||$bytesCount>INYOU_STORAGE_MAX_BYTES||!is_uploaded_file($tmp))throw new RuntimeException('La imagen no puede superar 10 MB.');
@@ -70,7 +90,7 @@ try{
 <main class="content"><div class="site-images-shell"><header><div>InYou Studio · Apariencia de la tienda</div><a class="btn light" href="/" target="_blank" rel="noopener">Ver tienda ↗</a></header>
 <span class="eyebrow">CONTENIDO VISUAL</span><h1>Imágenes de la tienda</h1>
 <p class="site-image-intro">Cambiá el banner principal, las fotos de categorías, las colecciones y las campañas desde aquí. Cada espacio admite una foto para notebook y otra para celular.</p>
-<div class="site-image-note">Tamaños recomendados en píxeles. Usá JPG o WEBP optimizado. Si no cargás una foto mobile, se usa la imagen desktop. Si no cargás ninguna, se conserva la imagen actual de la web. Los cambios no modifican las fotos de los productos.</div>
+<div class="site-image-note">Tamaños recomendados en píxeles. Usá JPG o WEBP optimizado, de hasta 10 MB. <strong>Primero elegí el archivo y después hacé clic en Guardar imagen.</strong> Si no cargás una foto mobile, se usa la imagen desktop. Si no cargás ninguna, se conserva la imagen actual de la web. Los cambios no modifican las fotos de los productos.</div>
 <?php if($error):?><div class="site-message error" role="alert"><?=h($error)?></div><?php endif;?>
 <?php if($notice):?><div class="site-message" role="status"><?=h($notice)?></div><?php endif;?>
 <div class="site-image-grid">
