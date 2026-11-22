@@ -157,6 +157,41 @@ try{
 .site-carousel-preview img{object-fit:contain}
 .site-carousel-admin .site-image-device form.site-upload-form{margin-top:8px}
 @media(max-width:620px){.site-carousel-admin{padding:14px}.site-carousel-slide{padding:12px}.site-carousel-title>form{width:100%}.site-carousel-add{width:100%}.site-carousel-tools{width:100%}.site-carousel-preview.desktop{aspect-ratio:1920/450}}
+
+/* InYou Studio: pantalla compacta organizada por áreas */
+.site-visual-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 22px;padding:7px;background:#f2ece8;border:1px solid #ebe0da;border-radius:14px}
+.site-visual-tabs button{border:0;background:transparent;border-radius:10px;padding:12px 17px;min-height:44px;font-weight:700;font-size:13px;color:#75645f;cursor:pointer}
+.site-visual-tabs button.is-current{background:#70081e;color:#fff;box-shadow:0 2px 8px rgba(112,8,30,.15)}
+.site-visual-tabs button:focus-visible{outline:3px solid #f17423;outline-offset:2px}
+.site-carousel-slide{padding:15px 18px}
+.site-carousel-slide-top{align-items:center}
+.site-carousel-slide-top>div:first-child{gap:10px;flex-wrap:wrap}
+.site-carousel-status-form{order:0}
+.site-carousel-tools{gap:8px}
+.site-carousel-switch{display:inline-flex!important;align-items:center;gap:9px;min-height:43px!important;padding:7px 12px!important;background:#fff!important;color:#795b57!important;border:1px solid #dbcfc8!important;border-radius:11px!important}
+.site-carousel-switch.is-on{color:#236443!important;background:#ecf6ef!important;border-color:#b9d7c1!important}
+.site-switch-track{width:38px;height:22px;background:#c6b6b2;border-radius:999px;position:relative;display:block;transition:background .18s}
+.site-switch-track>span{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.16);transition:transform .18s}
+.site-carousel-switch.is-on .site-switch-track{background:#34835a}
+.site-carousel-switch.is-on .site-switch-track>span{transform:translateX(16px)}
+.site-carousel-edit{border-top:1px solid #f0e7e2;padding-top:12px;margin-top:1px}
+.site-carousel-edit summary{display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;list-style:none;color:#70081e;font-weight:700;font-size:13px;padding:12px 15px;background:#fbf5f5;border:1px solid #f0e1e2;border-radius:10px}
+.site-carousel-edit summary::-webkit-details-marker{display:none}
+.site-carousel-edit[open] summary{margin-bottom:17px}
+.site-carousel-edit[open] summary span{transform:rotate(180deg)}
+.site-carousel-edit .site-image-sizes{padding:4px 0 8px}
+.site-image-card[hidden],#site-visual-grid[hidden],.site-carousel-admin[hidden]{display:none!important}
+.site-image-grid:not([hidden]){margin-top:10px}
+.site-carousel-slide .site-image-device .site-image-preview{background:#f8f3f0}
+@media(max-width:700px){
+ .site-visual-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .site-visual-tabs button{padding:11px 8px;font-size:12px}
+ .site-carousel-title h2{font-size:21px}
+ .site-carousel-slide-top{flex-direction:column;align-items:stretch}
+ .site-carousel-tools{justify-content:flex-start}
+ .site-carousel-switch{min-height:44px}
+}
+
 </style>
 </head><body class="dashboard"><?php adminSidebar('visuals');?>
 <main class="content"><div class="site-images-shell"><header><div>InYou Studio · Apariencia de la tienda</div><a class="btn light" href="/" target="_blank" rel="noopener">Ver tienda ↗</a></header>
