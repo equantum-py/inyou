@@ -32,9 +32,30 @@
    const item=values[slot]||{};
    const src=mobile.matches?(item.mobile||item.desktop):item.desktop;
    const bg=src?urlCss(src):'';
-   if(!bg){element.style.removeProperty('background-image');continue;}
+   if(!bg){
+    if(slot==='hero'){
+     element.querySelector('img[data-hero-banner]')?.remove();
+     element.classList.remove('hero-has-upload');
+    }
+    element.style.removeProperty('background-image');
+    continue;
+   }
    if(slot==='hero'){
-    element.style.backgroundImage=bg;
+    // Usar una imagen real: ocupa todo el ancho, conserva altura natural y no deja bandas.
+    let image=element.querySelector('img[data-hero-banner]');
+    if(!image){
+     image=document.createElement('img');
+     image.dataset.heroBanner='true';
+     image.alt='Banner principal de InYou';
+     image.decoding='async';
+     image.loading='eager';
+     image.fetchPriority='high';
+     element.append(image);
+    }
+    const source=new URL(src,location.href);
+    image.src=source.href;
+    element.classList.add('hero-has-upload');
+    element.style.backgroundImage='none';
    }else if(slot==='brand'){
     element.style.backgroundImage='linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.32)),'+bg;
    }else element.style.backgroundImage=bg;
