@@ -39,3 +39,46 @@ function inyouSiteImages(PDO $pdo):array {
  }
  return $result;
 }
+
+/** Orden y estado del carrusel principal. La imagen original es la diapositiva 0. */
+function inyouHeroOrder(PDO $pdo):array {
+ $stmt=$pdo->query("SELECT `value` FROM settings WHERE `key`='site_hero_slides' LIMIT 1");
+ $raw=$stmt->fetchColumn();
+ if($raw===false)return [['id'=>0,'active'=>true]];
+ $data=json_decode((string)$raw,true);
+ if(!is_array($data))return [['id'=>0,'active'=>true]];
+ $slides=[];$used=[];
+ foreach($data as $row){
+  if(!is_array($row)||!isset($row['id']))continue;
+  $id=filter_var($row['id'],FILTER_VALIDATE_INT);
+  if($id===false||$id<0||$id>5||isset($used[$id]))continue;
+  $used[$id]=true;
+  $slides[]=['id'=>$id,'active'=>!empty($row['active'])];
+ }
+ return $slides?:[['id'=>0,'active'=>true]];
+}
+function inyouHeroSaveOrder(PDO $pdo,array $slides):void {
+ if(count($slides)>6)throw new RuntimeException('Máximo 6 banners principales.');
+ $json=json_encode(array_values($slides),JSON_THROW_ON_ERROR);
+ $pdo->prepare("INSERT INTO settings (`key`,`value`) VALUES ('site_hero_slides',?) ON DUPLICATE KEY UPDATE `value`=VALUES(`value`)")->execute([$json]);
+}
+function inyouHeroImageKey(int $id,string $device):string {
+ if($id<0||$id>5||!in_array($device,['desktop','mobile'],true))throw new RuntimeException('Banner no válido.');
+ return $id===0?inyouSiteSettingKey('hero',$device):'site_img_hero_'.$id.'_'.$device;
+}
+function inyouHeroImages(PDO $pdo,bool $activeOnly=true):array {
+ $slides=inyouHeroOrder($pdo);
+ $stmt=$pdo->query("SELECT `key`,`value` FROM settings WHERE `key` LIKE 'site_img_hero_%'");
+ $paths=$stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+ $result=[];
+ foreach($slides as $slide){
+  if($activeOnly&&!$slide['active'])continue;
+  $entry=['id'=>$slide['id'],'active'=>$slide['active'],'desktop'=>null,'mobile'=>null];
+  foreach(['desktop','mobile'] as $device){
+   $path=(string)($paths[inyouHeroImageKey($slide['id'],$device)]??'');
+   if($path!==''&&inyouStorageIsPath($path))$entry[$device]=['path'=>$path,'url'=>inyouStoragePublicUrl($path)];
+  }
+  if(!$activeOnly||$entry['desktop']||$entry['mobile'])$result[]=$entry;
+ }
+ return $result;
+}
