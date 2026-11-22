@@ -102,7 +102,7 @@ try{
 <main class="content"><div class="site-images-shell"><header><div>InYou Studio · Apariencia de la tienda</div><a class="btn light" href="/" target="_blank" rel="noopener">Ver tienda ↗</a></header>
 <span class="eyebrow">CONTENIDO VISUAL</span><h1>Imágenes de la tienda</h1>
 <p class="site-image-intro">Cambiá el banner principal, las fotos de categorías, las colecciones y las campañas desde aquí. Cada espacio admite una foto para notebook y otra para celular.</p>
-<div class="site-image-note">Tamaños recomendados en píxeles. Usá JPG o WEBP optimizado, de hasta 10 MB. <strong>Primero elegí el archivo y después hacé clic en Guardar imagen.</strong> Si no cargás una foto mobile, se usa la imagen desktop. Si no cargás ninguna, se conserva la imagen actual de la web. Los cambios no modifican las fotos de los productos.</div>
+<div class="site-image-note">Tamaños recomendados en píxeles. Usá JPG o WEBP. El sistema optimiza automáticamente las imágenes grandes antes de subirlas. <strong>Primero elegí el archivo y después hacé clic en Guardar imagen.</strong> Si no cargás una foto mobile, se usa la imagen desktop. Si no cargás ninguna, se conserva la imagen actual de la web. Los cambios no modifican las fotos de los productos.</div>
 <?php if($error):?><div class="site-message error" role="alert"><?=h($error)?></div><?php endif;?>
 <?php if($notice):?><div class="site-message" role="status"><?=h($notice)?></div><?php endif;?>
 <div class="site-image-grid">
@@ -118,4 +118,4 @@ try{
 <?php if(!empty($images[$slot][$device])):?><form method="post" onsubmit="return confirm('¿Restablecer esta imagen? Volverá a la imagen predeterminada.')"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="reset"><input type="hidden" name="slot" value="<?=h($slot)?>"><input type="hidden" name="device" value="<?=h($device)?>"><button class="site-reset" type="submit">Restablecer imagen</button></form><?php endif;?>
 </div><?php endforeach;?></div></section>
 <?php endforeach;?>
-</div></div></main><script defer src="/admin/site-image-upload.js?v=1"></script></body></html>
+</div></div></main><script defer src="/admin/site-image-upload.js?v=2"></script></body></html>
