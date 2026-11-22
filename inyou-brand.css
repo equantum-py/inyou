@@ -118,9 +118,10 @@ body{accent-color:var(--brand-primary)}
 .hero .hero-media{
  width:100%;height:auto!important;min-height:0!important;
  aspect-ratio:1920 / 450;
- background-size:cover!important;
+ background-size:contain!important;
  background-position:center center!important;
- background-repeat:no-repeat;
+ background-repeat:no-repeat!important;
+ background-color:#f5f1ea;
  display:block!important;
 }
 .hero .hero-media>.hero-content{display:none!important}
