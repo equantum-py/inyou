@@ -111,3 +111,23 @@ body{accent-color:var(--brand-primary)}
  .footer .brand-isotype{width:168px;height:auto}
  .mobile-menu-head .menu-brand img{width:145px;height:auto}
 }
+
+/* Banner comercial: imagen limpia, proporciones editables por dispositivo.
+   Sin texto ni botones superpuestos, aunque el navegador conserve HTML anterior. */
+.hero{width:100%;padding:0!important}
+.hero .hero-media{
+ width:100%;height:auto!important;min-height:0!important;
+ aspect-ratio:1920 / 450;
+ background-size:cover!important;
+ background-position:center center!important;
+ background-repeat:no-repeat;
+ display:block!important;
+}
+.hero .hero-media>.hero-content{display:none!important}
+@media(max-width:767px){
+ .hero .hero-media{
+   width:100%;height:auto!important;min-height:0!important;
+   aspect-ratio:750 / 507;
+   background-position:center center!important;
+ }
+}
