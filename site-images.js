@@ -34,7 +34,7 @@
    const bg=src?urlCss(src):'';
    if(!bg){element.style.removeProperty('background-image');continue;}
    if(slot==='hero'){
-    element.style.backgroundImage='linear-gradient(90deg,rgba(15,16,14,.58) 0%,rgba(15,16,14,.22) 43%,rgba(15,16,14,.04) 72%),'+bg;
+    element.style.backgroundImage=bg;
    }else if(slot==='brand'){
     element.style.backgroundImage='linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.32)),'+bg;
    }else element.style.backgroundImage=bg;
