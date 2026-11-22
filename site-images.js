@@ -41,7 +41,8 @@
     continue;
    }
    if(slot==='hero'){
-    // Usar una imagen real: ocupa todo el ancho, conserva altura natural y no deja bandas.
+    // No mostrar la foto predeterminada mientras se obtiene el banner del admin.
+    // El banner nuevo solo se presenta cuando el archivo está cargado y decodificado.
     let image=element.querySelector('img[data-hero-banner]');
     if(!image){
      image=document.createElement('img');
@@ -52,10 +53,27 @@
      image.fetchPriority='high';
      element.append(image);
     }
-    const source=new URL(src,location.href);
-    image.src=source.href;
-    element.classList.add('hero-has-upload');
-    element.style.backgroundImage='none';
+    const source=new URL(src,location.href).href;
+    const token=(Number(element.dataset.heroRequest||0)+1);
+    element.dataset.heroRequest=String(token);
+    image.style.visibility='hidden';
+    element.classList.remove('hero-has-upload');
+    const reveal=()=>{
+     if(Number(element.dataset.heroRequest)!==token)return;
+     image.style.visibility='visible';
+     element.classList.add('hero-has-upload');
+    };
+    image.onload=()=>{
+     if(typeof image.decode==='function'){
+      image.decode().then(reveal).catch(reveal);
+     }else reveal();
+    };
+    image.onerror=()=>{
+     if(Number(element.dataset.heroRequest)===token)image.style.visibility='hidden';
+    };
+    if(image.src!==source)image.src=source;
+    else if(image.complete&&image.naturalWidth>0)image.onload();
+    element.style.setProperty('background-image','none','important');
    }else if(slot==='brand'){
     element.style.backgroundImage='linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.32)),'+bg;
    }else element.style.backgroundImage=bg;
