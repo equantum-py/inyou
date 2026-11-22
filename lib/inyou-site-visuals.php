@@ -5,7 +5,7 @@ require_once __DIR__.'/inyou-storage.php';
 /** Localized homepage image slots. URLs and secrets never come from client input. */
 function inyouSiteSlots():array {
  return [
-  'hero'=>['Banner principal','1920 × 820','750 × 1000','16:7 / 3:4'],
+  'hero'=>['Banner principal','1920 × 450','750 × 507','64:15 / 250:169'],
   'category_women'=>['Categoría: Mujer','800 × 800','600 × 600','1:1'],
   'category_men'=>['Categoría: Hombre','800 × 800','600 × 600','1:1'],
   'category_unisex'=>['Categoría: Unisex','800 × 800','600 × 600','1:1'],
