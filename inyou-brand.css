@@ -132,3 +132,30 @@ body{accent-color:var(--brand-primary)}
    background-position:center center!important;
  }
 }
+
+/* Imagen de campaña subida desde admin: ancho completo, alto según proporción real.
+   Evita las bandas laterales causadas por background-size:contain. */
+.hero .hero-media.hero-has-upload{
+ aspect-ratio:auto!important;
+ width:100%!important;
+ height:auto!important;
+ min-height:0!important;
+ background-image:none!important;
+ background-color:transparent!important;
+ padding:0!important;
+ overflow:hidden;
+}
+.hero .hero-media.hero-has-upload img[data-hero-banner]{
+ display:block!important;
+ width:100%!important;
+ height:auto!important;
+ max-width:none!important;
+ object-fit:contain;
+ object-position:center center;
+ margin:0!important;
+ padding:0!important;
+}
+@media(max-width:767px){
+ .hero .hero-media.hero-has-upload{aspect-ratio:auto!important}
+ .hero .hero-media.hero-has-upload img[data-hero-banner]{width:100%!important;height:auto!important}
+}
