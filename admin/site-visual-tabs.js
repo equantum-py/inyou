@@ -43,5 +43,11 @@
   const row=document.getElementById(hash);
   row?.querySelector('details.site-carousel-edit')?.setAttribute('open','');
   requestAnimationFrame(()=>row?.scrollIntoView({block:'center'}));
- }else if(match){requestAnimationFrame(()=>match.scrollIntoView({block:'start'}));}
+ }else if(match){
+  const editor=match.querySelector('details.site-card-details');
+  if(editor)editor.open=true;
+  const button=match.querySelector('[data-edit-target]');
+  if(button)button.textContent='Cerrar edición';
+  requestAnimationFrame(()=>match.scrollIntoView({block:'start'}));
+ }
 })();
