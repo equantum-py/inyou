@@ -22,6 +22,16 @@
   try{sessionStorage.setItem('inyou-visual-tab',group);}catch{}
  }
  tabs.forEach(tab=>tab.addEventListener('click',()=>show(tab.dataset.visualTab)));
+ document.querySelectorAll('[data-edit-target]').forEach(button=>{
+  button.addEventListener('click',()=>{
+   const card=document.getElementById(button.dataset.editTarget);
+   const editor=card?.querySelector('details.site-carousel-edit,details.site-card-details');
+   if(!editor)return;
+   editor.open=!editor.open;
+   button.textContent=editor.open?'Cerrar edición':(card.classList.contains('site-carousel-slide')?'Editar fotografías':'Editar');
+   if(editor.open)editor.scrollIntoView({block:'nearest',behavior:'smooth'});
+  });
+ });
  const hash=decodeURIComponent(location.hash.replace(/^#/,''));
  const match=cards.find(card=>card.id===hash);
  let initial='banners';
