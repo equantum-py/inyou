@@ -192,33 +192,94 @@ try{
  .site-carousel-switch{min-height:44px}
 }
 
+
+/* Diseño visual compacto: solo vista previa y acciones hasta abrir edición */
+.site-images-shell> .eyebrow{display:none}
+.site-images-shell h1{margin:15px 0 18px;font-size:clamp(27px,3vw,38px)}
+.site-visual-tabs{margin:0 0 18px;background:transparent;border:0;border-bottom:1px solid #e7ded9;border-radius:0;padding:0;gap:6px}
+.site-visual-tabs button{border-radius:9px 9px 0 0;font-size:13px;padding:14px 17px}
+.site-carousel-admin{padding:18px;margin:0}
+.site-carousel-title{margin-bottom:17px}
+.site-carousel-title h2{font-size:19px}
+.site-count{display:inline-block;font-size:11px;font-weight:600;color:#867671;padding-left:10px;vertical-align:middle}
+.site-carousel-slide{padding:15px;background:#fff}
+.site-carousel-slide-top{padding:0;margin-bottom:13px}
+.site-banner-overview{display:flex;gap:16px;align-items:center;border-top:1px solid #f0e7e2;padding-top:13px}
+.site-banner-thumb{flex:0 0 min(32%,290px);height:100px;border:1px solid #eee4de;border-radius:10px;background:#f6f1ed;display:grid;place-items:center;overflow:hidden}
+.site-banner-thumb img{width:100%;height:100%;object-fit:contain}
+.site-banner-thumb span{font-size:12px;color:#9a8a80}
+.site-banner-overview-info{display:grid;gap:9px;justify-items:start}
+.site-banner-overview-info strong{font-size:13px;color:#3b3330}
+.site-banner-overview-info small{font-size:11px;color:#8b7c75}
+.site-edit-open{min-height:40px;background:#70081e;border:1px solid #70081e;color:#fff;border-radius:8px;padding:10px 17px;font-weight:700;font-size:12px;cursor:pointer}
+.site-edit-open:hover{background:#560418}
+.site-carousel-edit{margin-top:14px}
+.site-carousel-edit:not([open]){border-top:0;padding-top:0}
+.site-carousel-edit>summary{background:transparent!important;border:0!important;padding:6px 0!important;color:#8a756e!important;font-size:11px!important}
+.site-carousel-edit:not([open])>summary{display:none}
+.site-carousel-edit[open]{padding-top:12px}
+.site-carousel-edit[open]>summary{display:flex}
+.site-image-grid:not([hidden]){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.site-image-card{padding:15px!important;align-self:start}
+.site-card-head{display:flex;gap:13px;align-items:center;min-height:90px}
+.site-card-thumb{width:85px;height:82px;flex:0 0 85px;border-radius:9px;background:#f6f1ed;border:1px solid #eee6e0;overflow:hidden;display:grid;place-items:center}
+.site-card-thumb img{height:100%;width:100%;object-fit:cover}
+.site-card-thumb span{font-size:11px;color:#ac9c93}
+.site-card-info{flex:1;min-width:0;display:grid;gap:6px}
+.site-card-info h2{font-size:15px!important;line-height:1.25;margin:0!important}
+.site-card-info small{color:#897b74;font-size:10px}
+.site-card-head>.site-edit-open{flex:0 0 auto}
+.site-card-details:not([open]){display:none}
+.site-card-details[open]{margin-top:13px;border-top:1px solid #eee3de;padding-top:12px}
+.site-card-details>summary{cursor:pointer;font-size:12px;color:#786760;padding-bottom:10px}
+.site-card-details .site-image-sizes{gap:10px}
+.site-card-details .site-image-preview{aspect-ratio:4/3}
+.site-file-feedback:empty{display:none}
+.site-upload-notice:empty{display:none}
+.site-image-card .site-image-device h3{font-size:12px}
+.site-image-card .site-image-device small{font-size:10px}
+.site-visual-tabs{position:sticky;top:0;z-index:10;background:#f7f4f1}
+@media(max-width:840px){.site-image-grid:not([hidden]){grid-template-columns:1fr}}
+@media(max-width:600px){
+ .site-images-shell h1{font-size:28px}
+ .site-visual-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .site-visual-tabs button{border-radius:9px;padding:11px 5px;font-size:12px}
+ .site-carousel-admin{padding:13px}
+ .site-carousel-slide{padding:12px}
+ .site-banner-overview{gap:10px}
+ .site-banner-thumb{flex-basis:37%;height:85px}
+ .site-card-thumb{height:70px;width:70px;flex-basis:70px}
+ .site-card-head{gap:10px}
+ .site-card-head>.site-edit-open{padding:10px 12px}
+ .site-banner-overview-info strong{font-size:12px}
+}
 </style>
 </head><body class="dashboard"><?php adminSidebar('visuals');?>
 <main class="content"><div class="site-images-shell"><header><div>InYou Studio · Apariencia de la tienda</div><a class="btn light" href="/" target="_blank" rel="noopener">Ver tienda ↗</a></header>
 <span class="eyebrow">CONTENIDO VISUAL</span><h1>Diseño de la tienda</h1>
-<p class="site-image-intro">Elegí qué querés editar. No necesitás recorrer todos los banners para cambiar uno.</p>
+
 <nav class="site-visual-tabs" aria-label="Secciones de imágenes de la tienda">
 <button type="button" data-visual-tab="banners" class="is-current" aria-current="page">Banners principales</button>
 <button type="button" data-visual-tab="categories">Categorías</button>
 <button type="button" data-visual-tab="collections">Colecciones</button>
 <button type="button" data-visual-tab="editorial">Campañas y looks</button>
 </nav>
-<p class="site-image-intro">Cambiá el banner principal, las fotos de categorías, las colecciones y las campañas desde aquí. Cada espacio admite una foto para notebook y otra para celular.</p>
-<div class="site-image-note">Tamaños recomendados en píxeles. Usá JPG o WEBP. El sistema optimiza automáticamente las imágenes grandes antes de subirlas. <strong>Primero elegí el archivo y después hacé clic en Guardar imagen.</strong> Si no cargás una foto mobile, se usa la imagen desktop. Si no cargás ninguna, se conserva la imagen actual de la web. Los cambios no modifican las fotos de los productos.</div>
+
+
 <?php if($error):?><div class="site-message error" role="alert"><?=h($error)?></div><?php endif;?>
 <?php if($notice):?><div class="site-message" role="status"><?=h($notice)?></div><?php endif;?>
 
 <section class="site-carousel-admin" id="carousel" data-visual-panel="banners">
  <div class="site-carousel-title">
-  <div><h2>Carrusel principal</h2><p>Agregá, activá o desactivá banners desde aquí. Para cambiar fotografías tocá «Editar imágenes».</p></div>
+  <div><h2>Banners principales <span class="site-count"><?=count($heroSlides)?> de 6</span></h2></div>
   <form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_add"><button type="submit" class="site-carousel-add" <?=count($heroSlides)>=6?'disabled':''?>>＋ Agregar banner</button></form>
  </div>
- <p class="site-carousel-help">Usá el interruptor <strong>Activo / Desactivado</strong> para decidir qué se muestra en la tienda. Podés cambiar el orden con las flechas. Los banners activos cambian cada 5 segundos.</p>
+ 
  <div class="site-carousel-list">
  <?php foreach($heroSlides as $position=>$slide):?>
  <article class="site-carousel-slide" id="banner-<?=(int)$slide['id']?>">
   <div class="site-carousel-slide-top">
-   <div><strong>Banner <?=(int)$position+1?></strong><span class="site-slide-badge <?=$slide['active']?'is-active':''?>"><?=$slide['active']?'Publicado':'Desactivado'?></span></div>
+   <div><strong>Banner <?=(int)$position+1?></strong></div>
    <div class="site-carousel-tools">
     <form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_up"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><button type="submit" title="Subir en el carrusel" aria-label="Mover banner hacia arriba" <?=$position===0?'disabled':''?>>↑</button></form>
     <form method="post"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_down"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><button type="submit" title="Bajar en el carrusel" aria-label="Mover banner hacia abajo" <?=$position===count($heroSlides)-1?'disabled':''?>>↓</button></form>
@@ -234,8 +295,16 @@ try{
     <?php if($slide['id']!==0):?><form method="post" onsubmit="return confirm('¿Quitar este banner del carrusel? Las fotos guardadas no se borrarán de Supabase.')"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="slide_remove"><input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>"><button type="submit" class="site-slide-remove">Quitar</button></form><?php endif;?>
    </div>
   </div>
-  <details class="site-carousel-edit" <?=$position===0?'open':''?>>
-   <summary>Editar imágenes desktop y mobile <span aria-hidden="true">▾</span></summary>
+  <div class="site-banner-overview" aria-label="Vista previa del banner">
+   <div class="site-banner-thumb">
+    <?php if(!empty($slide['desktop']['url'])):?><img src="<?=h($slide['desktop']['url'])?>" loading="lazy" alt="Banner <?=(int)$position+1?>"><?php elseif(!empty($slide['mobile']['url'])):?><img src="<?=h($slide['mobile']['url'])?>" loading="lazy" alt="Banner <?=(int)$position+1?>"><?php else:?><span>Sin fotografía</span><?php endif;?>
+   </div>
+   <div class="site-banner-overview-info"><strong><?=$slide['active']?'Visible en la tienda':'No visible en la tienda'?></strong><small><?=!empty($slide['desktop']['url'])?'Desktop ✓':'Desktop pendiente'?> · <?=!empty($slide['mobile']['url'])?'Mobile ✓':'Mobile pendiente'?></small>
+    <button type="button" class="site-edit-open" data-edit-target="banner-<?=(int)$slide['id']?>">Editar fotografías</button>
+   </div>
+  </div>
+  <details class="site-carousel-edit">
+   <summary>Fotos desktop y mobile <span aria-hidden="true">▾</span></summary>
   <div class="site-image-sizes">
    <?php foreach(['desktop'=>'Desktop / notebook','mobile'=>'Mobile / celular'] as $device=>$label):?>
    <div class="site-image-device">
@@ -250,7 +319,7 @@ try{
      <input type="hidden" name="slide_id" value="<?=(int)$slide['id']?>">
      <input type="hidden" name="device" value="<?=h($device)?>">
      <label class="site-file-picker">＋ Seleccionar imagen <input type="file" name="image" accept="image/jpeg,image/png,image/webp" aria-label="Banner <?=(int)$position+1?> <?=h($label)?>" required></label>
-     <p class="site-file-feedback" role="status" aria-live="polite">Elegí una foto para verla antes de guardar.</p>
+     <p class="site-file-feedback" role="status" aria-live="polite"></p>
      <p class="site-upload-notice" role="alert" aria-live="polite"></p>
      <button type="submit" disabled>Guardar imagen</button>
     </form>
@@ -268,15 +337,22 @@ try{
 
 <div class="site-image-grid" id="site-visual-grid">
 <?php foreach($slots as $slot=>$meta):if($slot==='hero')continue;?>
-<section class="site-image-card" data-visual-group="<?=str_starts_with($slot,'category_')?'categories':(str_starts_with($slot,'collection_')?'collections':'editorial')?>" id="slot-<?=h($slot)?>"><h2><?=h($meta[0])?></h2><p>Proporción recomendada: <?=h($meta[3])?></p><div class="site-image-sizes">
+<section class="site-image-card" data-visual-group="<?=str_starts_with($slot,'category_')?'categories':(str_starts_with($slot,'collection_')?'collections':'editorial')?>" id="slot-<?=h($slot)?>">
+ <div class="site-card-head">
+  <div class="site-card-thumb"><?php $thumb=$images[$slot]['desktop']['url']??$images[$slot]['mobile']['url']??'';if($thumb!==''):?><img src="<?=h($thumb)?>" loading="lazy" alt="<?=h($meta[0])?>"><?php else:?><span>Sin foto</span><?php endif;?></div>
+  <div class="site-card-info"><h2><?=h($meta[0])?></h2><small><?=!empty($images[$slot]['desktop'])?'Desktop ✓':'Desktop pendiente'?> · <?=!empty($images[$slot]['mobile'])?'Mobile ✓':'Mobile pendiente'?></small></div>
+  <button type="button" class="site-edit-open" data-edit-target="slot-<?=h($slot)?>">Editar</button>
+ </div>
+ <details class="site-card-details"><summary>Fotografías <span aria-hidden="true">▾</span></summary>
+ <div class="site-image-sizes">
 <?php foreach(['desktop'=>'Notebook / desktop','mobile'=>'Celular / mobile'] as $device=>$label):?>
 <div class="site-image-device"><h3><?=h($label)?></h3><small><?=h($device==='desktop'?$meta[1]:$meta[2])?> px</small>
 <div class="site-image-preview"><?php if(!empty($images[$slot][$device]['url'])):?><img src="<?=h($images[$slot][$device]['url'])?>" loading="lazy" alt="<?=h($meta[0].' '.$label)?>"><?php else:?><span>Sin imagen personalizada</span><?php endif;?></div>
 <form class="site-upload-form" method="post" enctype="multipart/form-data"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="upload"><input type="hidden" name="slot" value="<?=h($slot)?>"><input type="hidden" name="device" value="<?=h($device)?>">
 <label class="site-file-picker">＋ Seleccionar imagen <input type="file" name="image" accept="image/jpeg,image/png,image/webp" aria-label="Seleccionar imagen de <?=h($meta[0].' '.$label)?>" required></label>
-<p class="site-file-feedback" role="status" aria-live="polite">Elegí una foto para ver su vista previa.</p><p class="site-upload-notice" role="alert" aria-live="polite"></p>
+<p class="site-file-feedback" role="status" aria-live="polite"></p><p class="site-upload-notice" role="alert" aria-live="polite"></p>
 <button type="submit" disabled>Guardar imagen</button></form>
 <?php if(!empty($images[$slot][$device])):?><form method="post" onsubmit="return confirm('¿Restablecer esta imagen? Volverá a la imagen predeterminada.')"><input type="hidden" name="csrf" value="<?=h(csrf())?>"><input type="hidden" name="action" value="reset"><input type="hidden" name="slot" value="<?=h($slot)?>"><input type="hidden" name="device" value="<?=h($device)?>"><button class="site-reset" type="submit">Restablecer imagen</button></form><?php endif;?>
-</div><?php endforeach;?></div></section>
+</div><?php endforeach;?></div></details></section>
 <?php endforeach;?>
 </div></div></main><script defer src="/admin/site-image-upload.js?v=2"></script><script defer src="/admin/site-visual-tabs.js?v=1"></script></body></html>
